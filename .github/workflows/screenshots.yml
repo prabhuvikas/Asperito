@@ -72,7 +72,7 @@ jobs:
                   if result.returncode: raise SystemExit(f"App launch failed for {screen}")
               except subprocess.TimeoutExpired:
                   raise SystemExit(f"Launch timed out on {screen}; screenshot not trustworthy")
-              time.sleep(1.4)
+              time.sleep(3.0)
               target=str(pathlib.Path("screenshots")/f"{screen}.png")
               result=subprocess.run(["xcrun","simctl","io",udid,"screenshot",target],
                                     capture_output=True,text=True,timeout=60)
@@ -81,6 +81,14 @@ jobs:
           PY
           file screenshots/*.png
           ls -lh screenshots/
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in sorted(Path("screenshots").glob("*.png")):
+              size=path.stat().st_size
+              print(path.name, size)
+              if size < 120000:
+                  raise SystemExit(f"Screenshot looks incomplete/blank: {path.name} ({size} bytes)")
+          PY
           test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "17"
 
       - name: Upload unmodified screenshots
