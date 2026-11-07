@@ -55,7 +55,7 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .tint(AsperitoPalette.accessibleAction)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Done") { dismiss() } } }
+            .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Done") { dismiss() }.foregroundStyle(AsperitoPalette.accessibleAction) } }
         }
     }
 }
