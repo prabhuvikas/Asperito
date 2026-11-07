@@ -51,7 +51,17 @@ struct CameraView: View {
                 GeometryReader { area in
                     let fit = fittedSize(in:area.size,aspect:ratio)
                     ZStack {
-                        CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
+                        Group {
+                            #if DEBUG
+                            if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
+                                Color.black
+                            } else {
+                                CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
+                            }
+                            #else
+                            CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
+                            #endif
+                        }
                         if isGuideVisible {
                             OverlayCanvas(kind:selectedKind,color:selectedColor.color,opacity:opacity,settings:guideSettings,levelRoll:motion.roll)
                         }
@@ -138,13 +148,31 @@ struct CameraView: View {
             Button("OK",role:.cancel) { camera.errorMessage = nil }
         } message: { Text(camera.errorMessage ?? "Unknown error") }
         .onAppear {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
+                onboardingComplete = true
+            } else {
+                if onboardingComplete { camera.start() }
+                else { showingOnboarding = true }
+            }
+            #else
             if onboardingComplete { camera.start() }
             else { showingOnboarding = true }
+            #endif
             refreshMotion()
         }
         .onDisappear { camera.stop(); motion.stop(); countdownTask?.cancel() }
         .onChange(of:scenePhase) { _,new in
-            if new == .active { if onboardingComplete { camera.start() }; refreshMotion() }
+            if new == .active {
+                #if DEBUG
+                if !ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
+                    if onboardingComplete { camera.start() }
+                }
+                #else
+                if onboardingComplete { camera.start() }
+                #endif
+                refreshMotion()
+            }
             else { camera.stop(); motion.stop(); countdownTask?.cancel(); secondsRemaining = 0 }
         }
         .onChange(of:overlayRaw) { _,_ in refreshMotion() }
