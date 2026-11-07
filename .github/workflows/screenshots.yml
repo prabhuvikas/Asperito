@@ -60,19 +60,22 @@ jobs:
                "overlay-horizon","overlay-eyeLine","overlay-safeArea",
                "overlay-perspective","overlay-cinematic","overlay-custom"):
               print(f"Capturing {screen}...", flush=True)
-              subprocess.run(["xcrun","simctl","terminate",udid,bundle],
-                             capture_output=True, timeout=15)
+              try:
+                  subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
+              except subprocess.TimeoutExpired:
+                  print("Simulator terminate timed out; retrying with launch",flush=True)
               try:
                   result=subprocess.run(["xcrun","simctl","launch",udid,bundle,
                                          f"--asperito-screen={screen}"],
-                                        capture_output=True,text=True,timeout=35)
+                                        capture_output=True,text=True,timeout=60)
                   print("Launch:",result.returncode,result.stdout,result.stderr,flush=True)
+                  if result.returncode: raise SystemExit(f"App launch failed for {screen}")
               except subprocess.TimeoutExpired:
-                  print(f"Launch timed out on {screen}; continuing to screenshot",flush=True)
+                  raise SystemExit(f"Launch timed out on {screen}; screenshot not trustworthy")
               time.sleep(1.4)
               target=str(pathlib.Path("screenshots")/f"{screen}.png")
               result=subprocess.run(["xcrun","simctl","io",udid,"screenshot",target],
-                                    capture_output=True,text=True,timeout=30)
+                                    capture_output=True,text=True,timeout=60)
               print("Screenshot:",result.returncode,result.stderr,flush=True)
               if result.returncode: raise SystemExit(f"Failed to capture {screen}")
           PY
