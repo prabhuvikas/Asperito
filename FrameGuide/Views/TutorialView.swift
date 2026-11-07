@@ -41,7 +41,7 @@ struct TutorialView: View {
             .tint(AsperitoPalette.accessibleAction)
             .navigationTitle("Photography lesson")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Close") { dismiss() } } }
+            .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Close") { dismiss() }.foregroundStyle(AsperitoPalette.accessibleAction) } }
         }
     }
 }
