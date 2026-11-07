@@ -86,7 +86,7 @@
 		};
 		1F1AE47C972E05FD589BF400 /* PrivacyInfo.xcprivacy */ = {
 			isa = PBXFileReference;
-			lastKnownFileType = folder.assetcatalog;
+			lastKnownFileType = text.xml;
 			path = PrivacyInfo.xcprivacy;
 			sourceTree = "<group>";
 		};
