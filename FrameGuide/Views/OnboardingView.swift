@@ -10,7 +10,6 @@ struct OnboardingView: View {
             Image("DirectorLogo")
                 .resizable()
                 .scaledToFit()
-                .interpolation(.high)
                 .frame(maxWidth: 170)
                 .accessibilityLabel("Film director framing a landscape with his hands")
 
