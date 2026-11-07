@@ -116,7 +116,7 @@ struct CameraView: View {
                                 } label: {
                                     Text(kind.title)
                                         .font(.caption.weight(kind == selectedKind ? .bold : .medium))
-                                        .padding(.horizontal,12).padding(.vertical,9)
+                                        .padding(.horizontal,12).frame(minHeight:44)
                                         .background(kind == selectedKind ? AsperitoPalette.gold : AsperitoPalette.graphite,in:Capsule())
                                         .foregroundStyle(kind == selectedKind ? AsperitoPalette.midnight : .white)
                                 }
@@ -186,22 +186,24 @@ struct CameraView: View {
 
     private var topBar: some View {
         HStack {
-            Button { showingSettings = true } label: { Image(systemName:"gearshape") }
+            Button { showingSettings = true } label: { Image(systemName:"gearshape").frame(width:44,height:44) }
                 .accessibilityLabel("Settings")
             Spacer()
             AsperitoWordmark()
             Spacer()
             Button { isGuideVisible.toggle() } label: {
-                Image(systemName:isGuideVisible ? "eye" : "eye.slash")
+                Image(systemName:isGuideVisible ? "eye" : "eye.slash").frame(width:44,height:44)
             }.accessibilityLabel(isGuideVisible ? "Hide overlay" : "Show overlay")
             Button { camera.flashEnabled.toggle() } label: {
-                Image(systemName:camera.flashEnabled ? "bolt.fill" : "bolt.slash")
+                Image(systemName:camera.flashEnabled ? "bolt.fill" : "bolt.slash").frame(width:44,height:44)
             }.disabled(!camera.flashAvailable)
                 .accessibilityLabel(camera.flashEnabled ? "Flash on" : "Flash off")
         }
         .font(.title3)
         .buttonStyle(.plain)
-        .frame(height:38)
+        .foregroundStyle(AsperitoPalette.ivory)
+        .frame(height:48)
+        .background(AsperitoPalette.graphite, in: RoundedRectangle(cornerRadius:14))
     }
 
     private var controlBar: some View {
@@ -221,7 +223,7 @@ struct CameraView: View {
                 Spacer()
                 Button { showingPicker = true } label: { Label("Guides",systemImage:"square.grid.3x3") }
                 Spacer()
-                Button { showingExposure.toggle() } label: { Image(systemName:"plusminus.circle") }
+                Button { showingExposure.toggle() } label: { Image(systemName:"plusminus.circle").frame(width:44,height:44) }
                     .accessibilityLabel("Exposure adjustment")
             }
             .font(.caption.weight(.medium))
@@ -242,7 +244,7 @@ struct CameraView: View {
                     .tint(AsperitoPalette.gold)
                 Button { camera.flipCamera() } label: {
                     Image(systemName:"arrow.triangle.2.circlepath.camera")
-                        .font(.title3).frame(width:40,height:40)
+                        .font(.title3).frame(width:44,height:44)
                 }.accessibilityLabel("Switch camera")
             }
             HStack(alignment:.center) {
