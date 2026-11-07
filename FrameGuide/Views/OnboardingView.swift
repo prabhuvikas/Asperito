@@ -48,7 +48,6 @@ struct OnboardingView: View {
             Text("Private by design · Works offline")
                 .font(.caption)
                 .foregroundStyle(AsperitoPalette.mist)
-        }
           }
           .padding(24)
           .frame(maxWidth: .infinity)
