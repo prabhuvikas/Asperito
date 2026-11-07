@@ -229,6 +229,7 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
             captureLock.lock()
             pendingCaptures.removeValue(forKey: photo.resolvedSettings.uniqueID)
             captureLock.unlock()
+            finishCapture()
             DispatchQueue.main.async { self.isSaving = false; self.errorMessage = error?.localizedDescription ?? "Could not capture photo." }
             return
         }
@@ -237,11 +238,13 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         captureLock.unlock()
         DispatchQueue.global(qos:.userInitiated).async {
             guard let (photoData, image) = Self.cropJPEG(data, to:aspect) else {
+                self.finishCapture()
                 DispatchQueue.main.async { self.isSaving = false; self.errorMessage = "Photo could not be processed." }
                 return
             }
             PHPhotoLibrary.requestAuthorization(for:.addOnly) { status in
                 guard status == .authorized || status == .limited else {
+                    self.finishCapture()
                     DispatchQueue.main.async { self.isSaving = false; self.errorMessage = "Allow Photos access in Settings to save pictures." }
                     return
                 }
@@ -249,6 +252,7 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
                     let request = PHAssetCreationRequest.forAsset()
                     request.addResource(with:.photo,data:photoData,options:nil)
                 } completionHandler: { success, error in
+                    self.finishCapture()
                     DispatchQueue.main.async {
                         self.isSaving = false
                         if success { self.lastThumbnail = image; self.savedMessage = "Saved to Photos" }
