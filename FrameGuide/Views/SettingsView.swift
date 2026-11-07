@@ -42,6 +42,7 @@ struct SettingsView: View {
                             Text("Asperito Privacy").font(.title2.bold())
                             Text("Asperito uses your camera for the live viewfinder and captures photos when you press the shutter.")
                             Text("Photos are saved locally to your iPhone Photos library. Asperito does not upload photos, track usage, collect analytics or require an account.")
+                            Text("The Horizon Level guide reads device motion locally for alignment; motion data is not saved or sent anywhere.")
                             Text("Guide selection and settings are stored on this device. Delete Asperito to remove local preferences; saved photos stay in Photos.")
                             Text("You can revoke Camera and Add Photos permissions in iOS Settings at any time.")
                             Text("Policy revision: November 2026.").font(.footnote).foregroundStyle(.secondary)
