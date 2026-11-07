@@ -50,12 +50,28 @@ jobs:
           xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100 || true
           xcrun simctl install "$UDID" "$PWD/DerivedData/Build/Products/Debug-iphonesimulator/FrameGuide.app"
           BUNDLE_ID="com.frameguide.ios"
-          for SCREEN in onboarding picker tutorial settings camera; do
-            xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
-            xcrun simctl launch "$UDID" "$BUNDLE_ID" "--asperito-screen=$SCREEN"
-            sleep 3
-            xcrun simctl io "$UDID" screenshot "$PWD/screenshots/$SCREEN.png"
-          done
+          python3 - <<'PY'
+          import subprocess, time, os, pathlib, sys
+          udid = os.environ["SIMULATOR_UDID"]
+          bundle = "com.frameguide.ios"
+          for screen in ("onboarding","picker","tutorial","settings","camera"):
+              print(f"Capturing {screen}...", flush=True)
+              subprocess.run(["xcrun","simctl","terminate",udid,bundle],
+                             capture_output=True, timeout=15)
+              try:
+                  result=subprocess.run(["xcrun","simctl","launch",udid,bundle,
+                                         f"--asperito-screen={screen}"],
+                                        capture_output=True,text=True,timeout=35)
+                  print("Launch:",result.returncode,result.stdout,result.stderr,flush=True)
+              except subprocess.TimeoutExpired:
+                  print(f"Launch timed out on {screen}; continuing to screenshot",flush=True)
+              time.sleep(3)
+              target=str(pathlib.Path("screenshots")/f"{screen}.png")
+              result=subprocess.run(["xcrun","simctl","io",udid,"screenshot",target],
+                                    capture_output=True,text=True,timeout=30)
+              print("Screenshot:",result.returncode,result.stderr,flush=True)
+              if result.returncode: raise SystemExit(f"Failed to capture {screen}")
+          PY
           file screenshots/*.png
           ls -lh screenshots/
 
