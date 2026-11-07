@@ -109,7 +109,9 @@
 			isa = PBXBuildFile;
 			fileRef = 9B54092B068EB5273B0A72D6 /* OverlayLesson.swift */;
 		};
-		91B000000000000000000011 /* ScreenshotCaptureRoot.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCaptureRoot.swift; sourceTree = "<group>"; };
+		91B000000000000000000013 /* ScreenshotScenePreview.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotScenePreview.swift; sourceTree = "<group>"; };
+        91B000000000000000000014 /* ScreenshotScenePreview.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000013 /* ScreenshotScenePreview.swift */; };
+        91B000000000000000000011 /* ScreenshotCaptureRoot.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCaptureRoot.swift; sourceTree = "<group>"; };
         91B000000000000000000012 /* ScreenshotCaptureRoot.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000011 /* ScreenshotCaptureRoot.swift */; };
         9B9799571F8AC29DAFA991D4 /* CameraView.swift */ = {
 			isa = PBXFileReference;
@@ -243,6 +245,7 @@
 			children = (
 				9B9799571F8AC29DAFA991D4 /* CameraView.swift */,
                 91B000000000000000000011 /* ScreenshotCaptureRoot.swift */,
+                91B000000000000000000013 /* ScreenshotScenePreview.swift */,
 				5100607DC3B9B115707AD38C /* CapturedPhotoView.swift */,
 				23F38788F14468E84D9E67FB /* OnboardingView.swift */,
 				0A6D9A8FEBB044A2A731D193 /* OverlayPickerView.swift */,
@@ -317,6 +320,7 @@
 				EB36CF0DE97D1EDAD38B6D8E /* OverlayLesson.swift in Sources */,
 				8F57FF8E507AB97823C52332 /* CameraView.swift in Sources */,
                 91B000000000000000000012 /* ScreenshotCaptureRoot.swift in Sources */,
+                91B000000000000000000014 /* ScreenshotScenePreview.swift in Sources */,
 				E4F3EF48AADA3A7F605F8018 /* CapturedPhotoView.swift in Sources */,
 				114868A68DAD2559EF0097B0 /* OnboardingView.swift in Sources */,
 				8A00D8AAF86AF32F68C58925 /* OverlayPickerView.swift in Sources */,
