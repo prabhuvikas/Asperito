@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 40
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Show Xcode and available simulators
         run: |
@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload Xcode logs and test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: frameguide-ios-ci-${{ github.run_id }}
           path: |
