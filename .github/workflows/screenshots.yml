@@ -54,7 +54,11 @@ jobs:
           import subprocess, time, os, pathlib, sys
           udid = os.environ["SIMULATOR_UDID"]
           bundle = "com.frameguide.ios"
-          for screen in ("onboarding","picker","tutorial","settings","camera"):
+          for screen in ("onboarding","camera","picker","tutorial","settings",
+               "overlay-thirds","overlay-goldenGrid","overlay-goldenSpiral",
+               "overlay-center","overlay-diagonal","overlay-square",
+               "overlay-horizon","overlay-eyeLine","overlay-safeArea",
+               "overlay-perspective","overlay-cinematic","overlay-custom"):
               print(f"Capturing {screen}...", flush=True)
               subprocess.run(["xcrun","simctl","terminate",udid,bundle],
                              capture_output=True, timeout=15)
@@ -65,7 +69,7 @@ jobs:
                   print("Launch:",result.returncode,result.stdout,result.stderr,flush=True)
               except subprocess.TimeoutExpired:
                   print(f"Launch timed out on {screen}; continuing to screenshot",flush=True)
-              time.sleep(3)
+              time.sleep(1.4)
               target=str(pathlib.Path("screenshots")/f"{screen}.png")
               result=subprocess.run(["xcrun","simctl","io",udid,"screenshot",target],
                                     capture_output=True,text=True,timeout=30)
@@ -74,12 +78,13 @@ jobs:
           PY
           file screenshots/*.png
           ls -lh screenshots/
+          test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "17"
 
       - name: Upload unmodified screenshots
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: asperito-actual-simulator-screenshots
+          name: asperito-all-17-screens
           path: screenshots/*.png
           if-no-files-found: warn
           retention-days: 14
