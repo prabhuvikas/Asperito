@@ -9,6 +9,7 @@ final class CameraManager: NSObject, ObservableObject {
     private let photoOutput = AVCapturePhotoOutput()
     private var activeInput: AVCaptureDeviceInput?
     private var configured = false
+    private var captureInFlight = false // protected by the camera queue
     private var pendingCaptures: [Int64: CaptureAspect] = [:]
     private let captureLock = NSLock()
 
@@ -165,7 +166,8 @@ final class CameraManager: NSObject, ObservableObject {
 
     func capture(aspect: CaptureAspect, orientation: UIInterfaceOrientation = .portrait) {
         queue.async { [weak self] in
-            guard let self, self.configured, self.session.isRunning else { return }
+            guard let self, self.configured, self.session.isRunning, !self.captureInFlight else { return }
+            self.captureInFlight = true
             if let connection = self.photoOutput.connection(with:.video) {
                 let angle: CGFloat
                 switch orientation {
@@ -185,6 +187,10 @@ final class CameraManager: NSObject, ObservableObject {
             DispatchQueue.main.async { self.isSaving = true; self.savedMessage = nil }
             self.photoOutput.capturePhoto(with: settings, delegate: self)
         }
+    }
+
+    private func finishCapture() {
+        queue.async { [weak self] in self?.captureInFlight = false }
     }
 
     private static func cropJPEG(_ data: Data, to aspect: CaptureAspect) -> (Data, UIImage)? {
