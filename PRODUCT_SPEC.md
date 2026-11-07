@@ -1,4 +1,6 @@
-# FrameGuide MVP Product Specification
+# Asperito MVP Product Specification
+
+**App brand:** Asperito. **Internal repository / target:** FrameGuide.
 
 **Platform:** iPhone, iOS 17+, SwiftUI + AVFoundation. **Release:** 1.0. **Goal:** compose, learn and capture, offline.
 
