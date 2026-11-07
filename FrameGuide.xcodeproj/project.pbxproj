@@ -467,6 +467,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Asperito;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
+                INFOPLIST_KEY_NSMotionUsageDescription = "Asperito uses device motion to help you align the Horizon Level composition guide.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -492,6 +493,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Asperito;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
+                INFOPLIST_KEY_NSMotionUsageDescription = "Asperito uses device motion to help you align the Horizon Level composition guide.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
