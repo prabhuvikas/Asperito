@@ -16,7 +16,7 @@ struct OnboardingView: View {
             .padding(.horizontal,36)
 
             VStack(spacing:8) {
-                Text("FRAMEGUIDE").font(.subheadline.bold()).tracking(4).foregroundStyle(.yellow)
+                Text("ASPERITO").font(.subheadline.bold()).tracking(4).foregroundStyle(.yellow)
                 Text("Compose. Learn. Capture.").font(.title.bold()).multilineTextAlignment(.center)
                 Text("12 real-time composition guides, bite-sized photography lessons, and beautiful photos without visible grid lines.")
                     .font(.body).foregroundStyle(.secondary).multilineTextAlignment(.center)
