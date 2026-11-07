@@ -59,25 +59,38 @@ jobs:
                "overlay-center","overlay-diagonal","overlay-square",
                "overlay-horizon","overlay-eyeLine","overlay-safeArea",
                "overlay-perspective","overlay-cinematic","overlay-custom"):
-              print(f"Capturing {screen}...", flush=True)
-              try:
-                  subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
-              except subprocess.TimeoutExpired:
-                  print("Simulator terminate timed out; retrying with launch",flush=True)
-              try:
-                  result=subprocess.run(["xcrun","simctl","launch",udid,bundle,
-                                         f"--asperito-screen={screen}"],
-                                        capture_output=True,text=True,timeout=60)
-                  print("Launch:",result.returncode,result.stdout,result.stderr,flush=True)
-                  if result.returncode: raise SystemExit(f"App launch failed for {screen}")
-              except subprocess.TimeoutExpired:
-                  raise SystemExit(f"Launch timed out on {screen}; screenshot not trustworthy")
-              time.sleep(3.0)
-              target=str(pathlib.Path("screenshots")/f"{screen}.png")
-              result=subprocess.run(["xcrun","simctl","io",udid,"screenshot",target],
-                                    capture_output=True,text=True,timeout=60)
-              print("Screenshot:",result.returncode,result.stderr,flush=True)
-              if result.returncode: raise SystemExit(f"Failed to capture {screen}")
+              target=pathlib.Path("screenshots")/f"{screen}.png"
+              captured=False
+              for attempt in range(1,5):
+                  print(f"Capture {screen}: attempt {attempt}",flush=True)
+                  try:
+                      subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
+                  except subprocess.TimeoutExpired:
+                      print("Simulator termination timed out",flush=True)
+                  try:
+                      result=subprocess.run(["xcrun","simctl","launch",udid,bundle,
+                                             f"--asperito-screen={screen}"],
+                                            capture_output=True,text=True,timeout=60)
+                      print("Launch",result.returncode,result.stdout,result.stderr,flush=True)
+                      if result.returncode:
+                          time.sleep(2)
+                          continue
+                      time.sleep(3 + attempt * 2)
+                      shot=subprocess.run(["xcrun","simctl","io",udid,"screenshot",str(target)],
+                                          capture_output=True,text=True,timeout=60)
+                      if shot.returncode:
+                          print("Screenshot failure",shot.stderr,flush=True)
+                          continue
+                      size=target.stat().st_size
+                      print("Bytes",size,flush=True)
+                      if size >= 120000:
+                          captured=True
+                          break
+                  except subprocess.TimeoutExpired:
+                      print("Timed out; retrying",flush=True)
+                  time.sleep(2)
+              if not captured:
+                  raise SystemExit(f"Failed to capture readable screen: {screen}")
           PY
           file screenshots/*.png
           ls -lh screenshots/
