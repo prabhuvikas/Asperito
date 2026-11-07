@@ -2,6 +2,11 @@ import SwiftUI
 
 enum AsperitoPalette {
     static let gold = Color("AsperitoGold")
+    static let accessibleAction = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+          ? UIColor(red:0.949,green:0.780,blue:0.498,alpha:1)
+          : UIColor(red:0.45,green:0.27,blue:0.08,alpha:1)
+    })
     static let midnight = Color(red: 16.0/255, green: 21.0/255, blue: 29.0/255)
     static let graphite = Color(red: 29.0/255, green: 38.0/255, blue: 50.0/255)
     static let ivory = Color(red: 247.0/255, green: 243.0/255, blue: 234.0/255)
