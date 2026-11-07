@@ -32,7 +32,13 @@ struct CameraView: View {
     @State private var secondsRemaining = 0
     @State private var countdownTask: Task<Void, Never>?
 
-    private var selectedKind: OverlayKind { OverlayKind(rawValue:overlayRaw) ?? .thirds }
+    private var selectedKind: OverlayKind {
+        #if DEBUG
+        if let raw = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--asperito-screen=overlay-") })?.replacingOccurrences(of: "--asperito-screen=overlay-", with: ""),
+           let kind = OverlayKind(rawValue: raw) { return kind }
+        #endif
+        return OverlayKind(rawValue: overlayRaw) ?? .thirds
+    }
     private var selectedColor: GuideColor { GuideColor(rawValue:colorRaw) ?? .white }
     private var selectedAspect: CaptureAspect { CaptureAspect(rawValue:aspectRaw) ?? .fourThree }
     private var guideSettings: GuideSettings {
@@ -54,7 +60,7 @@ struct CameraView: View {
                         Group {
                             #if DEBUG
                             if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
-                                Color.black
+                                ScreenshotScenePreview()
                             } else {
                                 CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
                             }
@@ -95,7 +101,7 @@ struct CameraView: View {
                 VStack(spacing:10) {
                     HStack(spacing:8) {
                         Image(systemName:selectedKind.symbol).foregroundStyle(AsperitoPalette.gold)
-                        Text(selectedKind.title).font(.subheadline.weight(.semibold))
+                        Text(selectedKind.title).font(.subheadline.weight(.semibold)).foregroundStyle(AsperitoPalette.ivory)
                         Spacer()
                         Button { showingLesson = true } label: { Label("Learn",systemImage:"book.closed") }
                             .font(.caption.weight(.medium)).tint(AsperitoPalette.gold)
@@ -111,7 +117,7 @@ struct CameraView: View {
                                     Text(kind.title)
                                         .font(.caption.weight(kind == selectedKind ? .bold : .medium))
                                         .padding(.horizontal,12).padding(.vertical,9)
-                                        .background(kind == selectedKind ? AsperitoPalette.gold : Color.white.opacity(0.12),in:Capsule())
+                                        .background(kind == selectedKind ? AsperitoPalette.gold : AsperitoPalette.graphite,in:Capsule())
                                         .foregroundStyle(kind == selectedKind ? AsperitoPalette.midnight : .white)
                                 }
                                 .accessibilityLabel("Select \(kind.title) overlay")
@@ -231,7 +237,7 @@ struct CameraView: View {
             }
             HStack(spacing:16) {
                 Text("\(camera.zoomFactor, specifier:"%.1f")×")
-                    .font(.caption.monospacedDigit()).frame(width:38)
+                    .font(.caption.monospacedDigit()).foregroundStyle(AsperitoPalette.ivory).frame(width:38)
                 Slider(value:Binding(get:{ Double(camera.zoomFactor) },set:{ camera.setZoom(CGFloat($0)) }),in:1...5)
                     .tint(AsperitoPalette.gold)
                 Button { camera.flipCamera() } label: {
@@ -268,6 +274,9 @@ struct CameraView: View {
             }
             if let saved = camera.savedMessage { Text(saved).font(.caption).foregroundStyle(.green) }
         }
+        .foregroundStyle(AsperitoPalette.ivory)
+        .padding(10)
+        .background(AsperitoPalette.graphite.opacity(0.97), in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var pickerSheet: some View {
