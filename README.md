@@ -1,4 +1,6 @@
-# FrameGuide — Compose. Learn. Capture.
+# Asperito — Compose. Learn. Capture.
+
+**App name:** Asperito. **Internal Xcode/GitHub project name:** FrameGuide (unchanged).
 
 Native iPhone camera app using SwiftUI and AVFoundation, with 12 live composition guides, offline photographic tutorials and saved photos free of guides.
 
