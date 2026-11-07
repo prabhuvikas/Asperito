@@ -28,18 +28,18 @@ struct OverlayPickerView: View {
                             } label: {
                                 VStack(alignment:.leading,spacing:10) {
                                     ZStack {
-                                        Color(red:0.13,green:0.19,blue:0.22)
-                                        OverlayCanvas(kind:kind,opacity:0.95)
+                                        AsperitoPalette.graphite
+                                        OverlayCanvas(kind:kind,color:kind == selected ? AsperitoPalette.gold : .white,opacity:0.95)
                                             .padding(9)
                                     }
                                     .frame(height:82)
                                     .clipShape(RoundedRectangle(cornerRadius:8))
-                                    Text(kind.title).font(.caption.weight(.medium)).lineLimit(1)
+                                    Text(kind.title).font(.subheadline.weight(.semibold)).foregroundStyle(kind == selected ? AsperitoPalette.gold : AsperitoPalette.ivory).lineLimit(2).frame(maxWidth:.infinity,alignment:.leading)
                                 }
                                 .padding(10)
                                 .frame(maxWidth:.infinity,alignment:.leading)
-                                .background(selected == kind ? .yellow.opacity(0.18) : .white.opacity(0.07),in:RoundedRectangle(cornerRadius:12))
-                                .overlay(RoundedRectangle(cornerRadius:12).stroke(selected == kind ? .yellow : .clear,lineWidth:1.5))
+                                .background(AsperitoPalette.graphite,in:RoundedRectangle(cornerRadius:12))
+                                .overlay(RoundedRectangle(cornerRadius:12).stroke(selected == kind ? AsperitoPalette.gold : .white.opacity(0.1),lineWidth:1.5))
                             }
                             .foregroundStyle(.white)
                             .accessibilityLabel("Choose \(kind.title)")
@@ -49,14 +49,16 @@ struct OverlayPickerView: View {
                     Button(action:onLearn) {
                         Label("Learn \(selected.title)",systemImage:"book.closed.fill")
                             .frame(maxWidth:.infinity)
-                    }.buttonStyle(.borderedProminent).tint(.yellow).foregroundStyle(.black)
+                    }.buttonStyle(.borderedProminent).tint(AsperitoPalette.gold).foregroundStyle(.black)
                 }
                 .padding()
             }
+            .background(AsperitoPalette.midnight)
             .navigationTitle("Composition guides")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Done") { dismiss() } } }
         }
+        .preferredColorScheme(.dark)
     }
     @ViewBuilder private var extraSettings: some View {
         VStack(alignment:.leading,spacing:12) {
