@@ -34,6 +34,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .tint(AsperitoPalette.gold)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Done") { dismiss() } } }
         }

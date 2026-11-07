@@ -4,41 +4,51 @@ struct OnboardingView: View {
     var onContinue: () -> Void
 
     var body: some View {
-        VStack(spacing:24) {
-            Spacer()
-            ZStack {
-                RoundedRectangle(cornerRadius:22)
-                    .fill(LinearGradient(colors:[.black,.teal.opacity(0.38)],startPoint:.top,endPoint:.bottom))
-                OverlayCanvas(kind:.thirds,color:.yellow,opacity:0.95)
-                    .padding(22)
-            }
-            .frame(height:240)
-            .padding(.horizontal,36)
+        VStack(spacing: 20) {
+            Spacer(minLength: 12)
+            Image("DirectorLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 280)
+                .accessibilityLabel("Film director framing a landscape with his hands")
 
-            VStack(spacing:8) {
-                Text("ASPERITO").font(.subheadline.bold()).tracking(4).foregroundStyle(.yellow)
-                Text("Compose. Learn. Capture.").font(.title.bold()).multilineTextAlignment(.center)
-                Text("12 real-time composition guides, bite-sized photography lessons, and beautiful photos without visible grid lines.")
-                    .font(.body).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            }.padding(.horizontal,26)
-            VStack(alignment:.leading,spacing:14) {
-                Label("Choose a composition overlay",systemImage:"square.grid.3x3")
-                Label("Tap Learn for a quick camera tip",systemImage:"book.closed")
-                Label("Capture without any guide lines",systemImage:"camera")
+            VStack(spacing: 8) {
+                Text("ASPERITO")
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .tracking(3)
+                    .foregroundStyle(AsperitoPalette.gold)
+                Text("Compose. Learn. Capture.")
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(AsperitoPalette.ivory)
+                Text("12 live composition guides and short photography lessons to help you frame the perfect shot.")
+                    .foregroundStyle(AsperitoPalette.mist)
+                    .multilineTextAlignment(.center)
+            }
+            VStack(alignment: .leading, spacing: 15) {
+                Label("Choose a composition guide", systemImage: "square.grid.3x3")
+                Label("Learn to compose your shot", systemImage: "book.closed")
+                Label("Save photos without guide lines", systemImage: "camera")
             }
             .font(.subheadline)
-            Spacer()
-            Button(action:onContinue) {
-                Text("Start photographing").frame(maxWidth:.infinity)
+            .foregroundStyle(AsperitoPalette.ivory)
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AsperitoPalette.graphite, in: RoundedRectangle(cornerRadius: 18))
+            Spacer(minLength: 12)
+            Button(action: onContinue) {
+                Text("Start photographing")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 48)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.yellow)
-            .foregroundStyle(.black)
-            .padding(.horizontal,24)
-            Text("Offline · No account · Photos stay on your iPhone")
-                .font(.caption).foregroundStyle(.secondary)
-                .padding(.bottom,18)
+            .tint(AsperitoPalette.gold)
+            .foregroundStyle(AsperitoPalette.midnight)
+            Text("Private by design · Works offline")
+                .font(.caption)
+                .foregroundStyle(AsperitoPalette.mist)
         }
-        .background(Color(red:0.055,green:0.063,blue:0.075).ignoresSafeArea())
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AsperitoPalette.midnight.ignoresSafeArea())
     }
 }

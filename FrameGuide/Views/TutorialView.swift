@@ -29,12 +29,12 @@ struct TutorialView: View {
                         Text(lesson.exercise)
                     }
                     .padding().frame(maxWidth:.infinity,alignment:.leading)
-                    .background(.yellow.opacity(0.13),in:RoundedRectangle(cornerRadius:12))
+                    .background(AsperitoPalette.gold.opacity(0.13),in:RoundedRectangle(cornerRadius:12))
                     Button { onApply(); dismiss() } label: {
                         Label("Use this guide",systemImage:"camera.viewfinder")
                             .frame(maxWidth:.infinity)
                     }
-                    .buttonStyle(.borderedProminent).tint(.yellow).foregroundStyle(.black)
+                    .buttonStyle(.borderedProminent).tint(AsperitoPalette.gold).foregroundStyle(.black)
                 }
                 .padding()
             }

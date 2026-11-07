@@ -4,6 +4,11 @@
 	classes = {};
 	objectVersion = 56;
 	objects = {
+        91B000000000000000000001 /* AsperitoBrand.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsperitoBrand.swift; sourceTree = "<group>"; };
+        91B000000000000000000002 /* AsperitoBrand.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000001 /* AsperitoBrand.swift */; };
+        91B000000000000000000003 /* LaunchScreen.storyboard */ = { isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+        91B000000000000000000004 /* LaunchScreen.storyboard in Resources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000003 /* LaunchScreen.storyboard */; };
+        91B000000000000000000005 /* Brand */ = { isa = PBXGroup; children = (91B000000000000000000001 /* AsperitoBrand.swift */,); path = Brand; sourceTree = "<group>"; };
 		803B4613CDB936B4C5F5A37D /* FrameGuideApp.swift */ = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.swift;
@@ -254,6 +259,8 @@
 		312AEDB2B2706B27107125F2 /* FrameGuide */ = {
 			isa = PBXGroup;
 			children = (
+				91B000000000000000000005 /* Brand */,
+				91B000000000000000000003 /* LaunchScreen.storyboard */,
 				1C48CE29E4E135EE62951B22 /* App */,
 				45260E6DD3C4BF16D8239B5C /* Camera */,
 				25A22DAD46F3A5F56D2396D6 /* Overlays */,
@@ -297,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5130390FE5416CE8D87FCB33 /* FrameGuideApp.swift in Sources */,
+                91B000000000000000000002 /* AsperitoBrand.swift in Sources */,
 				DA3E20FE2F1FDDCE17B46198 /* CameraManager.swift in Sources */,
 				5AE331C53C8193B29B6D3916 /* CameraPreview.swift in Sources */,
 				E769CC94BA1993773104952A /* HorizonLevelManager.swift in Sources */,
@@ -318,6 +326,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC60FF02D9B2A930DBDCE73D /* Assets.xcassets in Resources */,
+                91B000000000000000000004 /* LaunchScreen.storyboard in Resources */,
 				A980254D92BA623746820906 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,7 +460,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
@@ -476,7 +485,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;

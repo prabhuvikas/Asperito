@@ -5,7 +5,7 @@ struct FrameGuideApp: App {
     var body: some Scene {
         WindowGroup {
             CameraView()
-                .preferredColorScheme(.dark)
+                .tint(AsperitoPalette.gold)
         }
     }
 }

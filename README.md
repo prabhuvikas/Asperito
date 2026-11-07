@@ -28,3 +28,7 @@ GitHub Actions runs a simulator build and XCTest suite on each pull request, wit
 ## Scope / limits
 
 iOS app build and tests need macOS/Xcode. A camera feed is not available in standard iPhone simulators. Real device testing is essential before TestFlight. No video capture, RAW support, AI scene detection, photo import, or cloud syncing in MVP.
+
+## Branding
+
+Asperito uses a static launch storyboard aligned to the camera chrome, a director-framing logo in onboarding, and dynamic champagne-gold accent tokens. See [Brand guidelines](BRAND_GUIDELINES.md).

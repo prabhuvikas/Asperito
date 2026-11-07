@@ -84,11 +84,11 @@ struct CameraView: View {
                 }
                 VStack(spacing:10) {
                     HStack(spacing:8) {
-                        Image(systemName:selectedKind.symbol).foregroundStyle(.yellow)
+                        Image(systemName:selectedKind.symbol).foregroundStyle(AsperitoPalette.gold)
                         Text(selectedKind.title).font(.subheadline.weight(.semibold))
                         Spacer()
                         Button { showingLesson = true } label: { Label("Learn",systemImage:"book.closed") }
-                            .font(.caption.weight(.medium)).tint(.yellow)
+                            .font(.caption.weight(.medium)).tint(AsperitoPalette.gold)
                     }
                     .padding(.horizontal,8)
                     ScrollView(.horizontal,showsIndicators:false) {
@@ -101,8 +101,8 @@ struct CameraView: View {
                                     Text(kind.title)
                                         .font(.caption.weight(kind == selectedKind ? .bold : .medium))
                                         .padding(.horizontal,12).padding(.vertical,9)
-                                        .background(kind == selectedKind ? Color.yellow : Color.white.opacity(0.12),in:Capsule())
-                                        .foregroundStyle(kind == selectedKind ? .black : .white)
+                                        .background(kind == selectedKind ? AsperitoPalette.gold : Color.white.opacity(0.12),in:Capsule())
+                                        .foregroundStyle(kind == selectedKind ? AsperitoPalette.midnight : .white)
                                 }
                                 .accessibilityLabel("Select \(kind.title) overlay")
                             }
@@ -114,7 +114,7 @@ struct CameraView: View {
             .padding(.horizontal,12)
             .padding(.vertical,8)
         }
-        .background(Color(red:0.055,green:0.063,blue:0.075).ignoresSafeArea())
+        .background(AsperitoPalette.midnight.ignoresSafeArea())
         .sheet(isPresented:$showingOnboarding) {
             OnboardingView {
                 onboardingComplete = true
@@ -155,7 +155,7 @@ struct CameraView: View {
             Button { showingSettings = true } label: { Image(systemName:"gearshape") }
                 .accessibilityLabel("Settings")
             Spacer()
-            Text("ASPERITO").font(.system(.subheadline,design:.rounded,weight:.heavy)).tracking(2)
+            AsperitoWordmark()
             Spacer()
             Button { isGuideVisible.toggle() } label: {
                 Image(systemName:isGuideVisible ? "eye" : "eye.slash")
@@ -197,7 +197,7 @@ struct CameraView: View {
                 HStack {
                     Image(systemName:"sun.min")
                     Slider(value:Binding(get:{ Double(camera.exposureBias) },set:{ camera.setExposure(Float($0)) }),in:-2...2,step:0.25)
-                        .tint(.yellow)
+                        .tint(AsperitoPalette.gold)
                     Image(systemName:"sun.max")
                 }.padding(.horizontal,12)
             }
@@ -205,7 +205,7 @@ struct CameraView: View {
                 Text("\(camera.zoomFactor, specifier:"%.1f")×")
                     .font(.caption.monospacedDigit()).frame(width:38)
                 Slider(value:Binding(get:{ Double(camera.zoomFactor) },set:{ camera.setZoom(CGFloat($0)) }),in:1...5)
-                    .tint(.yellow)
+                    .tint(AsperitoPalette.gold)
                 Button { camera.flipCamera() } label: {
                     Image(systemName:"arrow.triangle.2.circlepath.camera")
                         .font(.title3).frame(width:40,height:40)
