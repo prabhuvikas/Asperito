@@ -4,12 +4,14 @@ struct OnboardingView: View {
     var onContinue: () -> Void
 
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer(minLength: 12)
+        ScrollView {
+          VStack(spacing: 20) {
+            Spacer(minLength: 8)
             Image("DirectorLogo")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 280)
+                .interpolation(.high)
+                .frame(maxWidth: 170)
                 .accessibilityLabel("Film director framing a landscape with his hands")
 
             VStack(spacing: 8) {
@@ -47,8 +49,11 @@ struct OnboardingView: View {
                 .font(.caption)
                 .foregroundStyle(AsperitoPalette.mist)
         }
-        .padding(24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+          }
+          .padding(24)
+          .frame(maxWidth: .infinity)
+        }
+        .scrollIndicators(.hidden)
         .background(AsperitoPalette.midnight.ignoresSafeArea())
     }
 }
