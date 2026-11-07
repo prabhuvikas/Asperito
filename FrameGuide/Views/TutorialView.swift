@@ -11,8 +11,8 @@ struct TutorialView: View {
             ScrollView {
                 VStack(alignment:.leading,spacing:20) {
                     ZStack {
-                        LinearGradient(colors:[.indigo.opacity(0.4),.teal.opacity(0.3)],startPoint:.topLeading,endPoint:.bottomTrailing)
-                        OverlayCanvas(kind:kind,color:.yellow,opacity:0.95).padding(18)
+                        LinearGradient(colors:[AsperitoPalette.graphite,AsperitoPalette.midnight],startPoint:.topLeading,endPoint:.bottomTrailing)
+                        OverlayCanvas(kind:kind,color:AsperitoPalette.gold,opacity:0.95).padding(18)
                     }
                     .frame(height:220)
                     .clipShape(RoundedRectangle(cornerRadius:18))
