@@ -220,6 +220,9 @@ final class CameraManager: NSObject, ObservableObject {
 extension CameraManager: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard error == nil, let data = photo.fileDataRepresentation() else {
+            captureLock.lock()
+            pendingCaptures.removeValue(forKey: photo.resolvedSettings.uniqueID)
+            captureLock.unlock()
             DispatchQueue.main.async { self.isSaving = false; self.errorMessage = error?.localizedDescription ?? "Could not capture photo." }
             return
         }
