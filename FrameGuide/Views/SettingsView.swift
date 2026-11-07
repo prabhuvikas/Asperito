@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Binding var visible: Bool
     @Binding var timerSeconds: Int
     @Environment(\.dismiss) private var dismiss
+    @State private var showingPrivacy = false
 
     var body: some View {
         NavigationStack {
@@ -28,9 +29,26 @@ struct SettingsView: View {
                         Text("Off").tag(0); Text("3 seconds").tag(3); Text("10 seconds").tag(10)
                     }
                 }
-                Section {
+                Section("About and privacy") {
+                    Button("Privacy policy") { showingPrivacy = true }
                     Text("Photos are saved without composition guides. Tutorials and preferences are stored on this device; no account or internet connection is needed.")
                         .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            .sheet(isPresented: $showingPrivacy) {
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Asperito Privacy").font(.title2.bold())
+                            Text("Asperito uses your camera for the live viewfinder and captures photos when you press the shutter.")
+                            Text("Photos are saved locally to your iPhone Photos library. Asperito does not upload photos, track usage, collect analytics or require an account.")
+                            Text("Guide selection and settings are stored on this device. Delete Asperito to remove local preferences; saved photos stay in Photos.")
+                            Text("You can revoke Camera and Add Photos permissions in iOS Settings at any time.")
+                            Text("Policy revision: November 2026.").font(.footnote).foregroundStyle(.secondary)
+                        }.padding()
+                    }
+                    .navigationTitle("Privacy policy")
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showingPrivacy = false } } }
                 }
             }
             .navigationTitle("Settings")
