@@ -65,7 +65,7 @@ struct CameraView: View {
                             VStack(spacing:14) {
                                 Image(systemName:"camera.fill").font(.largeTitle)
                                 Text("Camera access required").font(.headline)
-                                Text("Enable camera access in iPhone Settings to use FrameGuide.")
+                                Text("Enable camera access in iPhone Settings to use Asperito.")
                                     .font(.subheadline).multilineTextAlignment(.center)
                                 Button("Open Settings") {
                                     if let url = URL(string:UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
@@ -155,7 +155,7 @@ struct CameraView: View {
             Button { showingSettings = true } label: { Image(systemName:"gearshape") }
                 .accessibilityLabel("Settings")
             Spacer()
-            Text("FRAMEGUIDE").font(.system(.subheadline,design:.rounded,weight:.heavy)).tracking(2)
+            Text("ASPERITO").font(.system(.subheadline,design:.rounded,weight:.heavy)).tracking(2)
             Spacer()
             Button { isGuideVisible.toggle() } label: {
                 Image(systemName:isGuideVisible ? "eye" : "eye.slash")
