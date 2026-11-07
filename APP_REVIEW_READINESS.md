@@ -12,8 +12,8 @@ This is a **pre-submission audit**, not a guarantee of Apple approval. A passing
 - [x] Tutorial illustration uses the same brand colors.
 - [x] Onboarding is scrollable for short screens and accessible text sizes.
 - [x] Privacy policy accessible in Settings.
-- [ ] **High-resolution original director artwork on GitHub**: onboarding image in this repository is still a small raster; the local downloadable branded project has the full original.
-- [ ] Inspect screenshots from the newest 17-screen CI artifact. A prior custom-grid frame was blank; the workflow now retries incomplete frames.
+- [x] **High-resolution director artwork on GitHub**: replaced the 192 × 192 logo with a 1254 × 1254 JPEG derivative of the original director-framing artwork in `FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg`; `Contents.json` references it. Verified in the final simulator onboarding screenshot.
+- [x] **17-screen visual regression check**: latest simulator capture [run #42395032783](https://github.com/prabhuvikas/FrameGuide/actions/runs/42395032783) completed successfully. Verified 17 distinct PNG files at 1206 × 2622 px, all valid and visually inspected; Custom Grid displays correct guide lines over the simulated landscape instead of a blank frame. The corresponding iOS simulator build and automated tests [run #42395032822](https://github.com/prabhuvikas/FrameGuide/actions/runs/42395032822) passed.
 
 ## Functional / device tests that MUST be completed on a real iPhone
 
