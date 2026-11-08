@@ -68,7 +68,7 @@ final class FrameGuideUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 10))
         let toggle = app.switches["Show guide"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        toggle.tap()
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         app.buttons["Done"].tap()
         let expectedButton = initiallyVisible ? "Show overlay" : "Hide overlay"
         XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 8),
