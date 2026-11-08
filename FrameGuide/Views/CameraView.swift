@@ -28,6 +28,7 @@ struct CameraView: View {
     @AppStorage("overlay.reflectionHorizontal") private var reflectionHorizontal = false
     @AppStorage("overlay.curveBend") private var curveBend = 0.5
     @AppStorage("overlay.gestureRotations") private var gestureRotationsJSON = "{}"
+    @AppStorage("education.rotationCoachSeen") private var rotationCoachSeen = false
     @AppStorage("camera.timer") private var timerSeconds = 0
     @AppStorage("onboarding.complete") private var onboardingComplete = false
 
@@ -42,9 +43,14 @@ struct CameraView: View {
     @State private var rotationGestureDelta = 0.0
     @State private var rotatingGuide = false
     @State private var lastHapticQuarter: Int?
+    @State private var showingRotationCoach = false
+    @State private var rotationCoachReplay = 0
 
     private var selectedKind: OverlayKind {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--asperito-screen=gesture") {
+            return .goldenSpiral
+        }
         if let raw = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--asperito-screen=overlay-") })?.replacingOccurrences(of: "--asperito-screen=overlay-", with: ""),
            let kind = OverlayKind(rawValue: raw) { return kind }
         #endif
@@ -60,7 +66,7 @@ struct CameraView: View {
     }
     private func handleRotation(_ degrees: Double, state: UIGestureRecognizer.State) {
         guard selectedKind.supportsGestureRotation, isGuideVisible,
-              !camera.permissionDenied else { return }
+              !camera.permissionDenied, !showingRotationCoach else { return }
         switch state {
         case .began, .changed:
             rotatingGuide = true
@@ -123,10 +129,18 @@ struct CameraView: View {
                                               onRotation:{ handleRotation($0,state:$1) })
                             #endif
                         }
-                        if isGuideVisible {
+                        if isGuideVisible && !showingRotationCoach {
                             OverlayCanvas(kind:selectedKind,color:selectedColor.color,opacity:opacity,
                                           settings:guideSettings,levelRoll:motion.roll,
                                           gestureRotationDegrees:currentRotation)
+                        }
+                        if showingRotationCoach && selectedKind.supportsGestureRotation && isGuideVisible {
+                            RotationCoachView(kind:selectedKind,
+                                              settings:guideSettings,
+                                              baseRotation:savedRotation(for:selectedKind),
+                                              replayID:rotationCoachReplay,
+                                              onReplay:{ rotationCoachReplay += 1 },
+                                              onDismiss:{ showingRotationCoach = false })
                         }
                         if rotatingGuide && selectedKind.supportsGestureRotation {
                             VStack {
@@ -177,6 +191,19 @@ struct CameraView: View {
                         Image(systemName:selectedKind.symbol).foregroundStyle(AsperitoPalette.gold)
                         Text(selectedKind.title).font(.subheadline.weight(.semibold)).foregroundStyle(AsperitoPalette.ivory)
                         Spacer()
+                        if selectedKind.supportsGestureRotation {
+                            Button {
+                                isGuideVisible = true
+                                rotationCoachSeen = true
+                                showingRotationCoach = true
+                                rotationCoachReplay += 1
+                            } label: {
+                                Label("Gesture",systemImage:"hand.draw")
+                            }
+                            .accessibilityLabel("Show rotation tutorial")
+                            .font(.caption.weight(.medium))
+                            .tint(AsperitoPalette.gold)
+                        }
                         Button { showingLesson = true } label: { Label("Learn",systemImage:"book.closed") }
                             .font(.caption.weight(.medium)).tint(AsperitoPalette.gold)
                     }
@@ -239,12 +266,19 @@ struct CameraView: View {
             if onboardingComplete { camera.start() }
             else { showingOnboarding = true }
             #endif
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--asperito-screen=gesture") {
+                isGuideVisible = true
+                showingRotationCoach = true
+            }
+            #endif
             refreshMotion()
         }
         .onDisappear {
             camera.stop(); motion.stop(); countdownTask?.cancel()
             rotationGestureDelta = 0
             rotatingGuide = false
+            showingRotationCoach = false
         }
         .onChange(of:scenePhase) { _,new in
             if new == .active {
@@ -260,6 +294,18 @@ struct CameraView: View {
             else { camera.stop(); motion.stop(); countdownTask?.cancel(); secondsRemaining = 0 }
         }
         .onChange(of:overlayRaw) { _,_ in
+            showingRotationCoach = false
+            if selectedKind.supportsGestureRotation && !rotationCoachSeen {
+                #if DEBUG
+                if !ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
+                    showingRotationCoach = true
+                    rotationCoachSeen = true
+                }
+                #else
+                showingRotationCoach = true
+                rotationCoachSeen = true
+                #endif
+            }
             rotationGestureDelta = 0
             rotatingGuide = false
             lastHapticQuarter = nil
@@ -407,5 +453,116 @@ struct CameraView: View {
         guard available.width > 0, available.height > 0 else { return .zero }
         if available.width / available.height > aspect { return CGSize(width:available.height*aspect,height:available.height) }
         return CGSize(width:available.width,height:available.width/aspect)
+    }
+}
+
+
+/// Camera-local, first-use gesture coaching: the *actual vector composition
+/// guide* animates while the AVCaptureVideoPreviewLayer stays stationary.
+/// It is an instructional animation, not a stored rotation or photo effect.
+private struct RotationCoachView: View {
+    let kind: OverlayKind
+    let settings: GuideSettings
+    let baseRotation: Double
+    let replayID: Int
+    let onReplay: () -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            RotationCoachMotion(kind:kind,settings:settings,baseRotation:baseRotation)
+                .id(replayID)
+                .allowsHitTesting(false)
+
+            VStack {
+                HStack {
+                    Text("TWIST TWO FINGERS")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.3)
+                        .foregroundStyle(AsperitoPalette.gold)
+                    Spacer()
+                    Button(action:onDismiss) {
+                        Image(systemName:"xmark")
+                            .font(.caption.weight(.bold))
+                            .padding(10)
+                            .background(AsperitoPalette.midnight.opacity(0.92),in:Circle())
+                    }
+                    .accessibilityLabel("Close rotation tutorial")
+                    .tint(.white)
+                }
+                .padding(.horizontal,14)
+                .padding(.top,12)
+                Spacer()
+                VStack(spacing:8) {
+                    Text("Rotate the guide. Not the photo.")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Pinch with two fingers and twist to your angle.")
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.white.opacity(0.85))
+                    HStack(spacing:18) {
+                        Button("Replay") { onReplay() }
+                            .accessibilityLabel("Replay gesture animation")
+                        Button("Try it") { onDismiss() }
+                            .accessibilityLabel("Try rotation gesture")
+                            .fontWeight(.bold)
+                    }
+                    .font(.subheadline)
+                    .tint(AsperitoPalette.gold)
+                    .padding(.top,5)
+                }
+                .frame(maxWidth:.infinity)
+                .padding(12)
+                .background(AsperitoPalette.midnight.opacity(0.92),
+                            in:RoundedRectangle(cornerRadius:18))
+                .padding(12)
+            }
+        }
+        .accessibilityIdentifier("rotation-coach")
+    }
+}
+
+private struct RotationCoachMotion: View {
+    let kind: OverlayKind
+    let settings: GuideSettings
+    let baseRotation: Double
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var exampleDegrees = 0.0
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // The same Canvas used by the live camera: only the guide moves.
+                OverlayCanvas(kind:kind,color:AsperitoPalette.gold,opacity:0.94,
+                              settings:settings,
+                              gestureRotationDegrees:baseRotation + exampleDegrees)
+                HStack(spacing:48) {
+                    fingertip
+                    fingertip
+                }
+                .rotationEffect(.degrees(exampleDegrees))
+                .position(x:geometry.size.width*0.5,y:geometry.size.height*0.48)
+                .shadow(color:.black.opacity(0.3),radius:7)
+            }
+            .frame(width:geometry.size.width,height:geometry.size.height)
+        }
+        .onAppear {
+            exampleDegrees = reduceMotion ? 35 : 0
+            if !reduceMotion {
+                withAnimation(.easeInOut(duration:2.25).repeatForever(autoreverses:true)) {
+                    exampleDegrees = 55
+                }
+            }
+        }
+    }
+
+    private var fingertip: some View {
+        Circle()
+            .fill(AsperitoPalette.gold.opacity(0.45))
+            .frame(width:27,height:27)
+            .overlay {
+                Circle().stroke(.white.opacity(0.9),lineWidth:2)
+                    .padding(-5)
+            }
     }
 }
