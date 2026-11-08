@@ -41,10 +41,12 @@ jobs:
           set -euo pipefail
           mkdir -p docs/screenshots
           # Verified successful capture (all 17 frames, including Custom Grid).
+          mkdir -p /tmp/asperito-capture
           gh run download 42395032783 \
             --repo "$GITHUB_REPOSITORY" \
             --name asperito-all-17-screens \
-            --dir docs/screenshots
+            --dir /tmp/asperito-capture
+          cp -f /tmp/asperito-capture/*.png docs/screenshots/
           test "$(find docs/screenshots -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "17"
           file docs/screenshots/overlay-custom.png
           file docs/screenshots/onboarding.png
