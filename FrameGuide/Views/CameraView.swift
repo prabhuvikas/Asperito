@@ -38,6 +38,7 @@ struct CameraView: View {
     @State private var showingLesson = false
     @State private var showingSettings = false
     @State private var showingExposure = false
+    @State private var showingZoom = false
     @State private var secondsRemaining = 0
     @State private var countdownTask: Task<Void, Never>?
     @State private var rotationGestureDelta = 0.0
@@ -111,7 +112,7 @@ struct CameraView: View {
         GeometryReader { root in
             let landscape = root.size.width > root.size.height
             let ratio = landscape ? 1 / selectedAspect.portraitRatio : selectedAspect.portraitRatio
-            VStack(spacing:12) {
+            VStack(spacing:6) {
                 topBar
                 GeometryReader { area in
                     let fit = fittedSize(in:area.size,aspect:ratio)
@@ -183,14 +184,29 @@ struct CameraView: View {
                     .frame(width:fit.width,height:fit.height)
                     .background(.black)
                     .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius:14))
+                    .clipShape(RoundedRectangle(cornerRadius:9))
                     .position(x:area.size.width/2,y:area.size.height/2)
                 }
-                VStack(spacing:10) {
-                    HStack(spacing:8) {
-                        Image(systemName:selectedKind.symbol).foregroundStyle(AsperitoPalette.gold)
-                        Text(selectedKind.title).font(.subheadline.weight(.semibold)).foregroundStyle(AsperitoPalette.ivory)
-                        Spacer()
+                VStack(spacing:8) {
+                    HStack(spacing:10) {
+                        Button { showingPicker = true } label: {
+                            HStack(spacing:8) {
+                                Image(systemName:selectedKind.symbol)
+                                    .foregroundStyle(AsperitoPalette.gold)
+                                Text(selectedKind.title)
+                                    .lineLimit(1)
+                                    .font(.subheadline.weight(.semibold))
+                                Image(systemName:"chevron.down")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(AsperitoPalette.mist)
+                            }
+                            .padding(.horizontal,13)
+                            .frame(height:42)
+                            .background(AsperitoPalette.graphite,in:Capsule())
+                        }
+                        .accessibilityLabel("Guides")
+                        .accessibilityHint("Choose from eighteen composition guides")
+                        Spacer(minLength:4)
                         if selectedKind.supportsGestureRotation {
                             Button {
                                 isGuideVisible = true
@@ -198,38 +214,26 @@ struct CameraView: View {
                                 showingRotationCoach = true
                                 rotationCoachReplay += 1
                             } label: {
-                                Label("Gesture",systemImage:"hand.draw")
+                                Image(systemName:"hand.draw")
+                                    .frame(width:44,height:44)
                             }
                             .accessibilityLabel("Show rotation tutorial")
-                            .font(.caption.weight(.medium))
-                            .tint(AsperitoPalette.gold)
+                            .accessibilityHint("Watch how to rotate this composition with two fingers")
                         }
-                        Button { showingLesson = true } label: { Label("Learn",systemImage:"book.closed") }
-                            .font(.caption.weight(.medium)).tint(AsperitoPalette.gold)
-                    }
-                    .padding(.horizontal,8)
-                    ScrollView(.horizontal,showsIndicators:false) {
-                        HStack(spacing:8) {
-                            ForEach(OverlayKind.allCases) { kind in
-                                Button {
-                                    overlayRaw = kind.rawValue
-                                    UISelectionFeedbackGenerator().selectionChanged()
-                                } label: {
-                                    Text(kind.title)
-                                        .font(.caption.weight(kind == selectedKind ? .bold : .medium))
-                                        .padding(.horizontal,12).frame(minHeight:44)
-                                        .background(kind == selectedKind ? AsperitoPalette.gold : AsperitoPalette.graphite,in:Capsule())
-                                        .foregroundStyle(kind == selectedKind ? AsperitoPalette.midnight : .white)
-                                }
-                                .accessibilityLabel("Select \(kind.title) overlay")
-                            }
+                        Button { showingLesson = true } label: {
+                            Image(systemName:"book.closed")
+                                .frame(width:44,height:44)
                         }
+                        .accessibilityLabel("Learn")
                     }
+                    .foregroundStyle(AsperitoPalette.ivory)
+                    .buttonStyle(.plain)
+                    .padding(.horizontal,3)
                     controlBar
                 }
             }
-            .padding(.horizontal,12)
-            .padding(.vertical,8)
+            .padding(.horizontal,9)
+            .padding(.vertical,5)
         }
         .background(AsperitoPalette.midnight.ignoresSafeArea())
         .sheet(isPresented:$showingOnboarding) {
@@ -314,100 +318,145 @@ struct CameraView: View {
     }
 
     private var topBar: some View {
-        HStack {
-            Button { showingSettings = true } label: { Image(systemName:"gearshape").frame(width:44,height:44) }
-                .accessibilityLabel("Settings")
-            Spacer()
+        HStack(spacing:6) {
+            Button { showingSettings = true } label: {
+                Image(systemName:"gearshape")
+                    .frame(width:44,height:44)
+            }
+            .accessibilityLabel("Settings")
+            Spacer(minLength:2)
             AsperitoWordmark()
-            Spacer()
+            Spacer(minLength:2)
             Button { isGuideVisible.toggle() } label: {
-                Image(systemName:isGuideVisible ? "eye" : "eye.slash").frame(width:44,height:44)
-            }.accessibilityLabel(isGuideVisible ? "Hide overlay" : "Show overlay")
+                Image(systemName:isGuideVisible ? "eye" : "eye.slash")
+                    .frame(width:44,height:44)
+            }
+            .accessibilityLabel(isGuideVisible ? "Hide overlay" : "Show overlay")
             Button { camera.flashEnabled.toggle() } label: {
-                Image(systemName:camera.flashEnabled ? "bolt.fill" : "bolt.slash").frame(width:44,height:44)
-            }.disabled(!camera.flashAvailable)
-                .accessibilityLabel(camera.flashEnabled ? "Flash on" : "Flash off")
+                Image(systemName:camera.flashEnabled ? "bolt.fill" : "bolt.slash")
+                    .frame(width:44,height:44)
+            }
+            .disabled(!camera.flashAvailable)
+            .accessibilityLabel(camera.flashEnabled ? "Flash on" : "Flash off")
         }
-        .font(.title3)
+        .font(.system(size:18,weight:.regular))
         .buttonStyle(.plain)
         .foregroundStyle(AsperitoPalette.ivory)
-        .frame(height:48)
-        .background(AsperitoPalette.graphite, in: RoundedRectangle(cornerRadius:14))
+        .frame(height:46)
     }
 
     private var controlBar: some View {
-        VStack(spacing:10) {
-            HStack {
+        VStack(spacing:7) {
+            HStack(spacing:2) {
                 Menu {
                     ForEach(CaptureAspect.allCases) { aspect in
                         Button(aspect.rawValue) { aspectRaw = aspect.rawValue }
                     }
-                } label: { Label(selectedAspect.rawValue,systemImage:"aspectratio") }
-                Spacer()
+                } label: {
+                    Label(selectedAspect.rawValue,systemImage:"aspectratio")
+                        .frame(minWidth:60,minHeight:40)
+                }
+                .accessibilityLabel("Photo aspect ratio")
+                Spacer(minLength:2)
                 Menu {
                     ForEach([0,3,10],id:\.self) { seconds in
                         Button(seconds == 0 ? "Off" : "\(seconds) seconds") { timerSeconds = seconds }
                     }
-                } label: { Label(timerSeconds == 0 ? "Timer" : "\(timerSeconds)s",systemImage:"timer") }
-                Spacer()
-                Button { showingPicker = true } label: { Label("Guides",systemImage:"square.grid.3x3") }
-                Spacer()
-                Button { showingExposure.toggle() } label: { Image(systemName:"plusminus.circle").frame(width:44,height:44) }
-                    .accessibilityLabel("Exposure adjustment")
+                } label: {
+                    Label(timerSeconds == 0 ? "Timer" : "\(timerSeconds)s",systemImage:"timer")
+                        .frame(minWidth:58,minHeight:40)
+                }
+                Spacer(minLength:2)
+                Button { showingZoom.toggle() } label: {
+                    Text("\(camera.zoomFactor,specifier:"%.1f")×")
+                        .font(.caption.monospacedDigit().weight(.semibold))
+                        .frame(minWidth:50,minHeight:40)
+                }
+                .accessibilityLabel("Zoom controls")
+                .accessibilityValue("\(camera.zoomFactor,specifier:"%.1f") times")
+                Spacer(minLength:2)
+                Button { showingExposure.toggle() } label: {
+                    Image(systemName:"plusminus.circle")
+                        .frame(width:44,height:44)
+                }
+                .accessibilityLabel("Exposure adjustment")
             }
             .font(.caption.weight(.medium))
-            .tint(.white)
-            .padding(.horizontal,8)
+            .tint(AsperitoPalette.ivory)
+            .foregroundStyle(AsperitoPalette.ivory)
             if showingExposure {
-                HStack {
+                HStack(spacing:9) {
                     Image(systemName:"sun.min")
-                    Slider(value:Binding(get:{ Double(camera.exposureBias) },set:{ camera.setExposure(Float($0)) }),in:-2...2,step:0.25)
+                    Slider(value:Binding(get:{ Double(camera.exposureBias) },
+                                         set:{ camera.setExposure(Float($0)) }),
+                           in:-2...2,step:0.25)
                         .tint(AsperitoPalette.gold)
+                        .accessibilityLabel("Exposure")
                     Image(systemName:"sun.max")
-                }.padding(.horizontal,12)
+                }
+                .padding(.horizontal,13)
             }
-            HStack(spacing:16) {
-                Text("\(camera.zoomFactor, specifier:"%.1f")×")
-                    .font(.caption.monospacedDigit()).foregroundStyle(AsperitoPalette.ivory).frame(width:38)
-                Slider(value:Binding(get:{ Double(camera.zoomFactor) },set:{ camera.setZoom(CGFloat($0)) }),in:1...5)
-                    .tint(AsperitoPalette.gold)
-                Button { camera.flipCamera() } label: {
-                    Image(systemName:"arrow.triangle.2.circlepath.camera")
-                        .font(.title3).frame(width:44,height:44)
-                }.accessibilityLabel("Switch camera")
+            if showingZoom {
+                HStack(spacing:10) {
+                    Text("1×")
+                    Slider(value:Binding(get:{ Double(camera.zoomFactor) },
+                                         set:{ camera.setZoom(CGFloat($0)) }),in:1...5)
+                        .tint(AsperitoPalette.gold)
+                        .accessibilityLabel("Zoom")
+                    Text("5×")
+                }
+                .font(.caption.monospacedDigit())
+                .padding(.horizontal,13)
             }
-            HStack(alignment:.center) {
+            HStack(alignment:.center,spacing:12) {
                 Button { showingPhotoPreview = camera.lastThumbnail != nil } label: {
                     Group {
                         if let image = camera.lastThumbnail {
                             Image(uiImage:image).resizable().scaledToFill()
-                                .frame(width:44,height:44).clipShape(RoundedRectangle(cornerRadius:9))
+                                .frame(width:42,height:42)
+                                .clipShape(RoundedRectangle(cornerRadius:9))
                         } else {
-                            Image(systemName:"photo").frame(width:44,height:44)
-                                .background(.white.opacity(0.1),in:RoundedRectangle(cornerRadius:9))
+                            Image(systemName:"photo")
+                                .frame(width:42,height:42)
+                                .background(.white.opacity(0.075),
+                                            in:RoundedRectangle(cornerRadius:9))
                         }
-                    }.frame(width:44,height:44)
+                    }
+                    .frame(width:44,height:44)
                 }
                 .disabled(camera.lastThumbnail == nil)
                 .accessibilityLabel("Preview last captured photo")
                 .frame(maxWidth:.infinity,alignment:.leading)
                 Button(action:shutter) {
-                    Circle().fill(.white).frame(width:60,height:60)
-                        .padding(5).overlay(Circle().stroke(.white,lineWidth:3))
+                    Circle().fill(.white)
+                        .frame(width:59,height:59)
+                        .padding(5)
+                        .overlay(Circle().stroke(.white,lineWidth:2.5))
                 }
-                .disabled(!camera.isRunning || camera.isSaving || secondsRemaining > 0 || camera.permissionDenied)
+                .disabled(!camera.isRunning || camera.isSaving ||
+                          secondsRemaining > 0 || camera.permissionDenied)
                 .accessibilityLabel("Take photo")
-                Group {
-                    if camera.isSaving { ProgressView().tint(.white) }
-                    else if camera.savedMessage != nil { Image(systemName:"checkmark.circle.fill").foregroundStyle(.green) }
-                    else { Image(systemName:"camera") }
-                }.frame(maxWidth:.infinity,alignment:.trailing)
+                Button { camera.flipCamera() } label: {
+                    Image(systemName:"arrow.triangle.2.circlepath.camera")
+                        .font(.title3)
+                        .frame(width:44,height:44)
+                }
+                .accessibilityLabel("Switch camera")
+                .frame(maxWidth:.infinity,alignment:.trailing)
             }
-            if let saved = camera.savedMessage { Text(saved).font(.caption).foregroundStyle(.green) }
+            .padding(.horizontal,12)
+            if camera.isSaving {
+                ProgressView().tint(AsperitoPalette.gold)
+                    .accessibilityLabel("Saving photo")
+            } else if let saved = camera.savedMessage {
+                Text(saved).font(.caption).foregroundStyle(AsperitoPalette.gold)
+            }
         }
         .foregroundStyle(AsperitoPalette.ivory)
-        .padding(10)
-        .background(AsperitoPalette.graphite.opacity(0.97), in: RoundedRectangle(cornerRadius: 16))
+        .padding(.vertical,8)
+        .padding(.horizontal,8)
+        .background(AsperitoPalette.graphite.opacity(0.78),
+                    in:RoundedRectangle(cornerRadius:18))
     }
 
     private var pickerSheet: some View {
@@ -474,48 +523,56 @@ private struct RotationCoachView: View {
                 .id(replayID)
                 .allowsHitTesting(false)
 
-            VStack {
-                HStack {
-                    Text("TWIST TWO FINGERS")
-                        .font(.caption2.weight(.bold))
-                        .tracking(1.3)
+            VStack(spacing:10) {
+                HStack(spacing:10) {
+                    Image(systemName:"hand.draw")
+                        .font(.title3)
                         .foregroundStyle(AsperitoPalette.gold)
-                    Spacer()
+                    VStack(alignment:.leading,spacing:3) {
+                        Text("TWIST TWO FINGERS")
+                            .font(.caption.weight(.bold))
+                            .tracking(1)
+                            .foregroundStyle(AsperitoPalette.gold)
+                        Text("Rotate the guide. Not the photo.")
+                            .font(.caption)
+                            .foregroundStyle(AsperitoPalette.ivory)
+                    }
+                    Spacer(minLength:0)
                     Button(action:onDismiss) {
                         Image(systemName:"xmark")
-                            .font(.caption.weight(.bold))
-                            .padding(10)
-                            .background(AsperitoPalette.midnight.opacity(0.92),in:Circle())
+                            .font(.caption.weight(.semibold))
+                            .frame(width:36,height:36)
                     }
                     .accessibilityLabel("Close rotation tutorial")
                     .tint(.white)
                 }
-                .padding(.horizontal,14)
+                .padding(12)
+                .background(AsperitoPalette.midnight.opacity(0.88),
+                            in:RoundedRectangle(cornerRadius:15))
+                .padding(.horizontal,12)
                 .padding(.top,12)
-                Spacer()
-                VStack(spacing:8) {
-                    Text("Rotate the guide. Not the photo.")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Pinch with two fingers and twist to your angle.")
-                        .font(.caption)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(.white.opacity(0.85))
-                    HStack(spacing:18) {
-                        Button("Replay") { onReplay() }
-                            .accessibilityLabel("Replay gesture animation")
-                        Button("Try it") { onDismiss() }
-                            .accessibilityLabel("Try rotation gesture")
-                            .fontWeight(.bold)
+                Spacer(minLength:0)
+                HStack(spacing:10) {
+                    Button(action:onReplay) {
+                        Label("Replay",systemImage:"arrow.counterclockwise")
+                            .frame(maxWidth:.infinity,minHeight:44)
                     }
-                    .font(.subheadline)
-                    .tint(AsperitoPalette.gold)
-                    .padding(.top,5)
+                    .accessibilityLabel("Replay gesture animation")
+                    .foregroundStyle(AsperitoPalette.ivory)
+                    .background(AsperitoPalette.midnight.opacity(0.88),
+                                in:Capsule())
+                    Button(action:onDismiss) {
+                        Label("Try it",systemImage:"checkmark")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth:.infinity,minHeight:44)
+                    }
+                    .accessibilityLabel("Try rotation gesture")
+                    .foregroundStyle(AsperitoPalette.midnight)
+                    .background(AsperitoPalette.gold,in:Capsule())
                 }
-                .frame(maxWidth:.infinity)
-                .padding(12)
-                .background(AsperitoPalette.midnight.opacity(0.92),
-                            in:RoundedRectangle(cornerRadius:18))
-                .padding(12)
+                .font(.subheadline)
+                .padding(.horizontal,18)
+                .padding(.bottom,12)
             }
         }
         .accessibilityIdentifier("rotation-coach")

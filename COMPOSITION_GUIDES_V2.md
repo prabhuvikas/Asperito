@@ -43,3 +43,7 @@ The gesture demonstration now lives **inside the iPhone camera viewfinder**, not
 - UI tests launch the actual iOS camera fixture in `--asperito-screen=gesture` mode and exercise replay, dismiss and reopen.
 
 This is an animated usage explanation in the real SwiftUI camera UI, not a GIF overlaid onto the final photograph, and not a substitute for physical-device multitouch QA.
+
+## Cinematic Minimal camera redesign
+
+The camera now uses the selected Option 1 layout: a quiet dark header, one compact composition selector rather than an always-visible horizontal list, a larger camera preview, and a slim lower control deck. The full 18-guide picker remains available through **Guides**. Shutter, front/rear switching, capture ratio, timer, exposure, and zoom remain available; the zoom slider opens from the compact zoom button. The native two-finger gesture coach retains Replay, Try it, and Close, but now uses a minimal translucent banner over the viewfinder rather than a large opaque instructional panel. Controls remain at least 44 points across their primary hit targets, with accessibility labels and existing UI tests retained. No photo-rendering pipeline is changed.

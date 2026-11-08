@@ -16,11 +16,25 @@ final class FrameGuideUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Take photo"].exists)
         XCTAssertTrue(app.buttons["Switch camera"].exists)
         XCTAssertTrue(app.buttons["Exposure adjustment"].exists)
+        XCTAssertTrue(app.buttons["Guides"].exists)
+        XCTAssertTrue(app.buttons["Zoom controls"].exists)
         app.buttons["Hide overlay"].tap()
         XCTAssertTrue(app.buttons["Show overlay"].exists)
         app.buttons["Show overlay"].tap()
         XCTAssertTrue(app.buttons["Hide overlay"].exists)
     }
+    func testCinematicMinimalZoomAndGuideControls() {
+        let app = launch()
+        XCTAssertTrue(app.buttons["Guides"].waitForExistence(timeout:15))
+        XCTAssertTrue(app.buttons["Zoom controls"].exists)
+        app.buttons["Zoom controls"].tap()
+        XCTAssertTrue(app.sliders["Zoom"].waitForExistence(timeout:5))
+        app.buttons["Zoom controls"].tap()
+        XCTAssertFalse(app.sliders["Zoom"].exists)
+        app.buttons["Guides"].tap()
+        XCTAssertTrue(app.navigationBars["Composition guides"].waitForExistence(timeout:10))
+    }
+
     func testAllEighteenPickerGuidesExist() {
         let app = launch("picker")
         for name in ["Rule of Thirds","Golden Ratio","Golden Spiral",
