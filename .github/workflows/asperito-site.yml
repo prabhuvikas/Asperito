@@ -126,7 +126,7 @@ jobs:
                   if tag=="link" and a.get("rel")=="stylesheet" and a.get("href","").startswith("./"): self.links.append(a["href"])
           p=Page(); p.feed((root/"index.html").read_text())
           for src in p.images+p.links:
-              if src.startswith("./"): assert (root/src[2:]).exists(), f"Missing {src}"
+              if src.startswith("./"): assert (root/src[2:].split("?",1)[0]).exists(), f"Missing {src}"
           assert len(p.images)>=10
           print(f"Verified {len(p.images)} website images, all scripts and CSS, and 23 source screenshots")
           PY
