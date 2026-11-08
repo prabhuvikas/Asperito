@@ -78,6 +78,23 @@ final class FrameGuideUITests: XCTestCase {
         XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 10),
                       "Guide visibility must survive app termination and relaunch")
     }
+    func testInCameraGestureAnimationAndReplay() {
+        let app = launch("gesture")
+        XCTAssertTrue(app.staticTexts["TWIST TWO FINGERS"].waitForExistence(timeout:15))
+        XCTAssertTrue(app.staticTexts["Rotate the guide. Not the photo."].exists)
+        XCTAssertTrue(app.buttons["Replay gesture animation"].exists)
+        app.buttons["Replay gesture animation"].tap()
+        XCTAssertTrue(app.staticTexts["TWIST TWO FINGERS"].exists)
+        app.buttons["Try rotation gesture"].tap()
+        XCTAssertFalse(app.staticTexts["TWIST TWO FINGERS"].exists)
+        // The in-camera help entry point remains available after dismissal.
+        XCTAssertTrue(app.buttons["Show rotation tutorial"].exists)
+        app.buttons["Show rotation tutorial"].tap()
+        XCTAssertTrue(app.staticTexts["TWIST TWO FINGERS"].waitForExistence(timeout:5))
+        app.buttons["Close rotation tutorial"].tap()
+        XCTAssertFalse(app.staticTexts["TWIST TWO FINGERS"].exists)
+    }
+
     func testOfflineTutorialRenders() {
         let app = launch("tutorial")
         XCTAssertTrue(app.staticTexts["Golden Spiral"].waitForExistence(timeout: 10))
