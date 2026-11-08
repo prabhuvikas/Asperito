@@ -1,0 +1,53 @@
+# Asperito Motion Website
+
+This directory is a fully static, mobile-first GitHub Pages experience for **Asperito**.
+
+- `index.html`: semantic content, swipeable 18-guide carousel and screenshot gallery.
+- `style.css`: cinematic midnight / champagne-gold visual design, adaptive responsive layouts, scroll transitions, depth, and reduced-motion preferences.
+- `app.js`: interactive composition-carousel navigation (swipe, arrows, keyboard), screenshot carousel navigation, accessible state announcements and scroll reveal.
+- `screenshots/`: original 23 PNG captures from iPhone Simulator, copied automatically by GitHub Actions.
+- The interactive composition selector and gallery feature 18 guides, including the six new manually adjustable composition modes.
+- `asperito-logo.png`, `asperito-favicon.png`: cleaned director logo shared with iOS onboarding and app icon; generated reproducibly from `branding/asperito-original.jpg`.
+
+## Live URL
+
+https://prabhuvikas.github.io/Asperito/
+
+Publishing is configured in `.github/workflows/asperito-site.yml` and targets the `feat/ios-mvp` development branch. **One-time owner action may be required:** open repository Settings → Pages and set Build and deployment source to **GitHub Actions**. Then rerun the **Asperito Website + Screenshots** workflow. After merging the feature branch, update the workflow trigger and checkout ref to `main`.
+
+## Cinematic Minimal simulator refresh
+
+The **Cinematic Minimal** redesign is built and its iOS unit/UI suite and screenshot workflow both passed at commit `c944ec0f8951fb33b0aba1227ba5e9a16d0c1d0e`.
+
+This site's workflow synchronizes all **23 original iPhone Simulator PNGs** from successful screenshot workflow run **42479805572**, including the compact guide selector, quieter header and streamlined camera controls. It also synchronizes the running-app gesture tutorial video from the same simulator run before testing and deploying the site. No generated promotional mockups are substituted for these captures.
+
+## Accessibility and motion
+
+- Semantic landmarks and headings; keyboard-accessible guide buttons and gallery arrows.
+- Selected guides report `aria-pressed`; updates announce via `aria-live`.
+- `prefers-reduced-motion` disables entrance transitions, floating effects, and smooth scrolling.
+- All screenshot images use meaningful alt text; controls have descriptive labels.
+- Responsive layout for narrow iPhones, tablets, and desktop.
+
+## Copyright and photo authenticity
+
+The aesthetic takes inspiration from Apple's spacious editorial web design, but does not copy Apple branding, proprietary site code, or interface assets.
+
+All **application screenshots are real screenshots of Asperito's SwiftUI views captured in Simulator**; the scene behind the composition overlays is a *synthetic, deterministic landscape fixture*, not an image captured by iPhone camera hardware. The website clearly states this limitation. Physical device tests and photographs are required before App Store marketing.
+
+## Local preview
+
+From repository root:
+
+```bash
+python3 -m http.server 8000 --directory docs
+```
+
+Open http://localhost:8000/ in a browser. The page uses standard HTML/CSS/JavaScript without a build step or external JS dependencies. Google Fonts load if online, with system font fallbacks offline.
+
+The live composition section is a keyboard-accessible, swipeable **18-guide carousel** with previous/next arrows, progress feedback, and a native mobile swipe gesture. It is tested in desktop and mobile browser automation.
+
+
+## Camera design visibility
+
+The webpage uses genuine iOS Simulator captures from the **Cinematic Minimal** implementation. The selected design is explicitly featured in the hero, a dedicated full-height `#camera-design` showcase, the Experience card, and the `#screens` gallery. Mobile viewports show the whole camera screenshot (including shutter controls) rather than cropping out the lower panel. Browser tests verify that the actual image loads, has usable display dimensions, remains inside the viewport, and is clearly labeled as the camera interface. Screenshot CSS/HTML references include a presentation version to avoid stale in-app Safari caches.

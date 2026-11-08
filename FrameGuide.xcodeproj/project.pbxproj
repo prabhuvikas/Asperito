@@ -1,0 +1,613 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+FA0000000000000000000001 /* FrameGuideUITests.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameGuideUITests.swift; sourceTree = "<group>"; };
+FA0000000000000000000002 /* UI tests in Sources */ = { isa = PBXBuildFile; fileRef = FA0000000000000000000001 /* FrameGuideUITests.swift */; };
+FA0000000000000000000003 /* FrameGuideUITests.xctest */ = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FrameGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+FA0000000000000000000004 /* FrameGuideUITests */ = { isa = PBXGroup; children = ( FA0000000000000000000001 /* FrameGuideUITests.swift */, ); path = FrameGuideUITests; sourceTree = "<group>"; };
+FA0000000000000000000005 /* UI Sources */ = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( FA0000000000000000000002 /* UI tests in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000006 /* UI Frameworks */ = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000007 /* UI Resources */ = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000008 /* UI Debug */ = { isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = FrameGuide; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+FA0000000000000000000009 /* UI Release */ = { isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = FrameGuide; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
+FA000000000000000000000A /* UI config list */ = { isa = XCConfigurationList; buildConfigurations = (FA0000000000000000000008 /* UI Debug */,FA0000000000000000000009 /* UI Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+FA000000000000000000000B /* FrameGuideUITests */ = { isa = PBXNativeTarget; buildConfigurationList = FA000000000000000000000A /* UI config list */; buildPhases = (FA0000000000000000000005 /* UI Sources */,FA0000000000000000000006 /* UI Frameworks */,FA0000000000000000000007 /* UI Resources */,); buildRules = (); dependencies = (FA000000000000000000000C /* FrameGuide */,); name = FrameGuideUITests; productName = FrameGuideUITests; productReference = FA0000000000000000000003 /* FrameGuideUITests.xctest */; productType = com.apple.product-type.bundle.ui-testing; };
+FA000000000000000000000C /* FrameGuide dependency */ = { isa = PBXTargetDependency; target = A55514FE41BE9F43DDDD0C34 /* FrameGuide */; targetProxy = FA000000000000000000000D /* App proxy */; };
+FA000000000000000000000D /* App proxy */ = { isa = PBXContainerItemProxy; containerPortal = E9708CC622B627DA0F185E54 /* Project object */; proxyType = 1; remoteGlobalIDString = A55514FE41BE9F43DDDD0C34; remoteInfo = FrameGuide; };
+
+        91B000000000000000000001 /* AsperitoBrand.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsperitoBrand.swift; sourceTree = "<group>"; };
+        91B000000000000000000002 /* AsperitoBrand.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000001 /* AsperitoBrand.swift */; };
+        91B000000000000000000003 /* LaunchScreen.storyboard */ = { isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+        91B000000000000000000004 /* LaunchScreen.storyboard in Resources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000003 /* LaunchScreen.storyboard */; };
+        91B000000000000000000005 /* Brand */ = { isa = PBXGroup; children = (91B000000000000000000001 /* AsperitoBrand.swift */,); path = Brand; sourceTree = "<group>"; };
+		803B4613CDB936B4C5F5A37D /* FrameGuideApp.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = FrameGuideApp.swift;
+			sourceTree = "<group>";
+		};
+		5130390FE5416CE8D87FCB33 /* FrameGuideApp.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 803B4613CDB936B4C5F5A37D /* FrameGuideApp.swift */;
+		};
+		500CDB6A5DC883A64D938507 /* Assets.xcassets */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder.assetcatalog;
+			path = Assets.xcassets;
+			sourceTree = "<group>";
+		};
+		CC60FF02D9B2A930DBDCE73D /* Assets.xcassets in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 500CDB6A5DC883A64D938507 /* Assets.xcassets */;
+		};
+		D748F42B2929089D2DD73176 /* CameraManager.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = CameraManager.swift;
+			sourceTree = "<group>";
+		};
+		DA3E20FE2F1FDDCE17B46198 /* CameraManager.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = D748F42B2929089D2DD73176 /* CameraManager.swift */;
+		};
+		EBCE87FC867D436A3C134C72 /* CameraPreview.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = CameraPreview.swift;
+			sourceTree = "<group>";
+		};
+		5AE331C53C8193B29B6D3916 /* CameraPreview.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = EBCE87FC867D436A3C134C72 /* CameraPreview.swift */;
+		};
+		573A83348C53CF38E9DEE1CD /* HorizonLevelManager.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = HorizonLevelManager.swift;
+			sourceTree = "<group>";
+		};
+		E769CC94BA1993773104952A /* HorizonLevelManager.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 573A83348C53CF38E9DEE1CD /* HorizonLevelManager.swift */;
+		};
+		30F46C0CBE58812BCD4CB438 /* OverlayCanvas.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayCanvas.swift;
+			sourceTree = "<group>";
+		};
+		C1BBA9B536F3FBF2F95EE283 /* OverlayCanvas.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 30F46C0CBE58812BCD4CB438 /* OverlayCanvas.swift */;
+		};
+		B7D81CC924FDBF0657705FB1 /* OverlayGeometry.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayGeometry.swift;
+			sourceTree = "<group>";
+		};
+		4599EE5E169AD7BD7C6710AC /* OverlayGeometry.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = B7D81CC924FDBF0657705FB1 /* OverlayGeometry.swift */;
+		};
+		8EBA8BE9DB670C4B20D4B7CA /* OverlayType.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayType.swift;
+			sourceTree = "<group>";
+		};
+		AFBD9FFDBAB9E42C61B99FDF /* OverlayType.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 8EBA8BE9DB670C4B20D4B7CA /* OverlayType.swift */;
+		};
+		1F1AE47C972E05FD589BF400 /* PrivacyInfo.xcprivacy */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			path = PrivacyInfo.xcprivacy;
+			sourceTree = "<group>";
+		};
+		A980254D92BA623746820906 /* PrivacyInfo.xcprivacy in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F1AE47C972E05FD589BF400 /* PrivacyInfo.xcprivacy */;
+		};
+		9B54092B068EB5273B0A72D6 /* OverlayLesson.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayLesson.swift;
+			sourceTree = "<group>";
+		};
+		EB36CF0DE97D1EDAD38B6D8E /* OverlayLesson.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 9B54092B068EB5273B0A72D6 /* OverlayLesson.swift */;
+		};
+		91B000000000000000000013 /* ScreenshotScenePreview.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotScenePreview.swift; sourceTree = "<group>"; };
+        91B000000000000000000014 /* ScreenshotScenePreview.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000013 /* ScreenshotScenePreview.swift */; };
+        91B000000000000000000011 /* ScreenshotCaptureRoot.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCaptureRoot.swift; sourceTree = "<group>"; };
+        91B000000000000000000012 /* ScreenshotCaptureRoot.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000011 /* ScreenshotCaptureRoot.swift */; };
+        9B9799571F8AC29DAFA991D4 /* CameraView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = CameraView.swift;
+			sourceTree = "<group>";
+		};
+		8F57FF8E507AB97823C52332 /* CameraView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 9B9799571F8AC29DAFA991D4 /* CameraView.swift */;
+		};
+		5100607DC3B9B115707AD38C /* CapturedPhotoView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = CapturedPhotoView.swift;
+			sourceTree = "<group>";
+		};
+		E4F3EF48AADA3A7F605F8018 /* CapturedPhotoView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 5100607DC3B9B115707AD38C /* CapturedPhotoView.swift */;
+		};
+		23F38788F14468E84D9E67FB /* OnboardingView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OnboardingView.swift;
+			sourceTree = "<group>";
+		};
+		114868A68DAD2559EF0097B0 /* OnboardingView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 23F38788F14468E84D9E67FB /* OnboardingView.swift */;
+		};
+		0A6D9A8FEBB044A2A731D193 /* OverlayPickerView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayPickerView.swift;
+			sourceTree = "<group>";
+		};
+		8A00D8AAF86AF32F68C58925 /* OverlayPickerView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 0A6D9A8FEBB044A2A731D193 /* OverlayPickerView.swift */;
+		};
+		2812EA6FA7E30F78927E1616 /* SettingsView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = SettingsView.swift;
+			sourceTree = "<group>";
+		};
+		E556FF2D07A2DD5BE3A259D7 /* SettingsView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 2812EA6FA7E30F78927E1616 /* SettingsView.swift */;
+		};
+		FBAA5A7FEC8AD0A3AFB8C95A /* TutorialView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = TutorialView.swift;
+			sourceTree = "<group>";
+		};
+		74A0B59301DA47536928B52A /* TutorialView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = FBAA5A7FEC8AD0A3AFB8C95A /* TutorialView.swift */;
+		};
+		BFF92FDA5B7874DC66773DFE /* OverlayGeometryTests.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = OverlayGeometryTests.swift;
+			sourceTree = "<group>";
+		};
+		11FAF029D84637EB6A41809B /* OverlayGeometryTests.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = BFF92FDA5B7874DC66773DFE /* OverlayGeometryTests.swift */;
+		};
+		92B501D53D4E1E28CEAE7377 /* FrameGuide.app */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = FrameGuide.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DE8B527170E67651B18402E7 /* FrameGuideTests.xctest */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = FrameGuideTests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1C48CE29E4E135EE62951B22 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				803B4613CDB936B4C5F5A37D /* FrameGuideApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		45260E6DD3C4BF16D8239B5C /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				D748F42B2929089D2DD73176 /* CameraManager.swift */,
+				EBCE87FC867D436A3C134C72 /* CameraPreview.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		25A22DAD46F3A5F56D2396D6 /* Overlays */ = {
+			isa = PBXGroup;
+			children = (
+				30F46C0CBE58812BCD4CB438 /* OverlayCanvas.swift */,
+				B7D81CC924FDBF0657705FB1 /* OverlayGeometry.swift */,
+				8EBA8BE9DB670C4B20D4B7CA /* OverlayType.swift */,
+			);
+			path = Overlays;
+			sourceTree = "<group>";
+		};
+		7A3879B176F38F8589DE2BAC /* Motion */ = {
+			isa = PBXGroup;
+			children = (
+				573A83348C53CF38E9DEE1CD /* HorizonLevelManager.swift */,
+			);
+			path = Motion;
+			sourceTree = "<group>";
+		};
+		D6AB4C88FC640D1E21724D7F /* Tutorials */ = {
+			isa = PBXGroup;
+			children = (
+				9B54092B068EB5273B0A72D6 /* OverlayLesson.swift */,
+			);
+			path = Tutorials;
+			sourceTree = "<group>";
+		};
+		58492F208780FA5EF3807E8F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9B9799571F8AC29DAFA991D4 /* CameraView.swift */,
+                91B000000000000000000011 /* ScreenshotCaptureRoot.swift */,
+                91B000000000000000000013 /* ScreenshotScenePreview.swift */,
+				5100607DC3B9B115707AD38C /* CapturedPhotoView.swift */,
+				23F38788F14468E84D9E67FB /* OnboardingView.swift */,
+				0A6D9A8FEBB044A2A731D193 /* OverlayPickerView.swift */,
+				2812EA6FA7E30F78927E1616 /* SettingsView.swift */,
+				FBAA5A7FEC8AD0A3AFB8C95A /* TutorialView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6EE67047A4B2648DDBB08231 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		312AEDB2B2706B27107125F2 /* FrameGuide */ = {
+			isa = PBXGroup;
+			children = (
+				91B000000000000000000005 /* Brand */,
+				91B000000000000000000003 /* LaunchScreen.storyboard */,
+				1C48CE29E4E135EE62951B22 /* App */,
+				45260E6DD3C4BF16D8239B5C /* Camera */,
+				25A22DAD46F3A5F56D2396D6 /* Overlays */,
+				7A3879B176F38F8589DE2BAC /* Motion */,
+				D6AB4C88FC640D1E21724D7F /* Tutorials */,
+				58492F208780FA5EF3807E8F /* Views */,
+				500CDB6A5DC883A64D938507 /* Assets.xcassets */,
+				1F1AE47C972E05FD589BF400 /* PrivacyInfo.xcprivacy */,
+			);
+			path = FrameGuide;
+			sourceTree = "<group>";
+		};
+		9F07B8E0140341044D9B748E /* FrameGuideTests */ = {
+			isa = PBXGroup;
+			children = (
+				BFF92FDA5B7874DC66773DFE /* OverlayGeometryTests.swift */,
+			);
+			path = FrameGuideTests;
+			sourceTree = "<group>";
+		};
+		00C45FD35CB0F9C5F764F070 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				92B501D53D4E1E28CEAE7377 /* FrameGuide.app */,
+				DE8B527170E67651B18402E7 /* FrameGuideTests.xctest */,
+                FA0000000000000000000003 /* FrameGuideUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF891E785808226D241F246E /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				312AEDB2B2706B27107125F2 /* FrameGuide */,
+				9F07B8E0140341044D9B748E /* FrameGuideTests */,
+                FA0000000000000000000004 /* FrameGuideUITests */,
+				00C45FD35CB0F9C5F764F070 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		27A3C4FC8CB7C0379533BAE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5130390FE5416CE8D87FCB33 /* FrameGuideApp.swift in Sources */,
+                91B000000000000000000002 /* AsperitoBrand.swift in Sources */,
+				DA3E20FE2F1FDDCE17B46198 /* CameraManager.swift in Sources */,
+				5AE331C53C8193B29B6D3916 /* CameraPreview.swift in Sources */,
+				E769CC94BA1993773104952A /* HorizonLevelManager.swift in Sources */,
+				C1BBA9B536F3FBF2F95EE283 /* OverlayCanvas.swift in Sources */,
+				4599EE5E169AD7BD7C6710AC /* OverlayGeometry.swift in Sources */,
+				AFBD9FFDBAB9E42C61B99FDF /* OverlayType.swift in Sources */,
+				EB36CF0DE97D1EDAD38B6D8E /* OverlayLesson.swift in Sources */,
+				8F57FF8E507AB97823C52332 /* CameraView.swift in Sources */,
+                91B000000000000000000012 /* ScreenshotCaptureRoot.swift in Sources */,
+                91B000000000000000000014 /* ScreenshotScenePreview.swift in Sources */,
+				E4F3EF48AADA3A7F605F8018 /* CapturedPhotoView.swift in Sources */,
+				114868A68DAD2559EF0097B0 /* OnboardingView.swift in Sources */,
+				8A00D8AAF86AF32F68C58925 /* OverlayPickerView.swift in Sources */,
+				E556FF2D07A2DD5BE3A259D7 /* SettingsView.swift in Sources */,
+				74A0B59301DA47536928B52A /* TutorialView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A502D32FB955F5149B337C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC60FF02D9B2A930DBDCE73D /* Assets.xcassets in Resources */,
+                91B000000000000000000004 /* LaunchScreen.storyboard in Resources */,
+				A980254D92BA623746820906 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4CCEE7D8B4C8CE980567E9C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A55514FE41BE9F43DDDD0C34 /* FrameGuide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C7ED36CA045499A6F191698B /* Build configuration list for FrameGuide */;
+			buildPhases = (
+				27A3C4FC8CB7C0379533BAE7 /* Sources */,
+				B4CCEE7D8B4C8CE980567E9C /* Frameworks */,
+				2A502D32FB955F5149B337C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FrameGuide;
+			productName = FrameGuide;
+			productReference = 92B501D53D4E1E28CEAE7377 /* FrameGuide.app */;
+			productType = com.apple.product-type.application;
+		};
+		1C34C6FBF6653E6F6323EEF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11FAF029D84637EB6A41809B /* OverlayGeometryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4E71695A2504A5BA6494F830 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83A7473BFCD31B55599C659C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		78002BFC6000B98D996A164B /* FrameGuideTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 274A2937C60F948A48147F4D /* Build configuration list for FrameGuideTests */;
+			buildPhases = (
+				1C34C6FBF6653E6F6323EEF5 /* Sources */,
+				83A7473BFCD31B55599C659C /* Frameworks */,
+				4E71695A2504A5BA6494F830 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1C40FA7A05DCD9D09D32ABC /* FrameGuide */,
+			);
+			name = FrameGuideTests;
+			productName = FrameGuideTests;
+			productReference = DE8B527170E67651B18402E7 /* FrameGuideTests.xctest */;
+			productType = com.apple.product-type.bundle.unit-test;
+		};
+		B6EADF24AEF6D36D15620F81 /* App target proxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9708CC622B627DA0F185E54 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A55514FE41BE9F43DDDD0C34;
+			remoteInfo = FrameGuide;
+		};
+		B1C40FA7A05DCD9D09D32ABC /* FrameGuide */ = {
+			isa = PBXTargetDependency;
+			target = A55514FE41BE9F43DDDD0C34 /* FrameGuide */;
+			targetProxy = B6EADF24AEF6D36D15620F81 /* App target proxy */;
+		};
+		D406828EC0F17107A0634415 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FFA1769EBE27244155A406BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		7474A53A8BBCC71F245EE10D /* 7474A53A8BBCC71F245EE10D */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D406828EC0F17107A0634415 /* Debug */,
+				FFA1769EBE27244155A406BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		856B26CF4896F999658FD905 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ENABLE_TESTABILITY = YES;
+                SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Asperito;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
+                INFOPLIST_KEY_NSMotionUsageDescription = "Asperito uses device motion to help you align the Horizon Level composition guide.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+			};
+			name = Debug;
+		};
+		259837DEF53EFE382E9A4DD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Asperito;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Asperito needs camera access to frame and capture photos.";
+                INFOPLIST_KEY_NSMotionUsageDescription = "Asperito uses device motion to help you align the Horizon Level composition guide.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Asperito saves the photos you capture to your Photos library.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		C7ED36CA045499A6F191698B /* C7ED36CA045499A6F191698B */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				856B26CF4896F999658FD905 /* Debug */,
+				259837DEF53EFE382E9A4DD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FC839915226E512946E7388F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrameGuide.app/FrameGuide";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+			};
+			name = Debug;
+		};
+		8B8C0D64173838C0B5BDD2A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrameGuide.app/FrameGuide";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		274A2937C60F948A48147F4D /* 274A2937C60F948A48147F4D */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC839915226E512946E7388F /* Debug */,
+				8B8C0D64173838C0B5BDD2A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9708CC622B627DA0F185E54 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				A55514FE41BE9F43DDDD0C34 = {
+				CreatedOnToolsVersion = 16.0;
+			};
+				78002BFC6000B98D996A164B = {
+				CreatedOnToolsVersion = 16.0;
+			};
+			};
+			};
+			buildConfigurationList = 7474A53A8BBCC71F245EE10D /* Build configuration list for PBXProject */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DF891E785808226D241F246E /* Root */;
+			productRefGroup = 00C45FD35CB0F9C5F764F070 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A55514FE41BE9F43DDDD0C34 /* FrameGuide */,
+				78002BFC6000B98D996A164B /* FrameGuideTests */,
+                FA000000000000000000000B /* FrameGuideUITests */,
+			);
+		};
+	};
+	rootObject = E9708CC622B627DA0F185E54 /* Project object */;
+}

@@ -1,0 +1,330 @@
+name: Asperito Website + Screenshots
+
+on:
+  push:
+    branches:
+      - feat/ios-mvp
+    paths:
+      - '.github/workflows/asperito-site.yml'
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: asperito-site
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Sync screenshots and deploy motion website
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Asperito feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/ios-mvp
+          persist-credentials: true
+
+      - name: Retrieve latest verified 23-screen simulator artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/screenshots /tmp/asperito-capture
+          RUN_ID=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow screenshots.yml --branch feat/ios-mvp --status success --limit 20 --json databaseId,headSha --jq '.[0].databaseId')
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "::error::A successful 23-screen capture is required before publishing."
+            exit 1
+          fi
+          echo "Using screenshot run: $RUN_ID"
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name asperito-all-23-screens --dir /tmp/asperito-capture
+          test "$(find /tmp/asperito-capture -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "23"
+          cp -f /tmp/asperito-capture/*.png docs/screenshots/
+          cp -f FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg docs/director.jpg
+          test "$(find docs/screenshots -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "23"
+          file docs/screenshots/overlay-sCurve.png docs/screenshots/overlay-goldenTriangle.png
+          test "$(stat -c%s docs/screenshots/overlay-sCurve.png)" -gt 120000
+          ls -lh docs/screenshots/
+
+      - name: Retrieve real iOS in-camera tutorial video
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/media /tmp/asperito-gesture-video
+          # The iOS capture is a separate macOS run. Wait for an actual
+          # recording artifact, never replace it with fabricated browser motion.
+          for attempt in $(seq 1 48); do
+            VIDEO_RUN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow screenshots.yml --branch feat/ios-mvp --status success --limit 20 --json databaseId --jq '.[0].databaseId')
+            if [ -n "$VIDEO_RUN" ] && [ "$VIDEO_RUN" != "null" ]; then
+              if gh run download "$VIDEO_RUN" --repo "$GITHUB_REPOSITORY" --name asperito-in-camera-gesture-video --dir /tmp/asperito-gesture-video; then
+                break
+              fi
+            fi
+            echo "Waiting for verified Simulator camera recording ($attempt/48)"
+            sleep 20
+          done
+          test -s /tmp/asperito-gesture-video/gesture-in-camera.mp4
+          cp /tmp/asperito-gesture-video/gesture-in-camera.mp4 docs/media/gesture-in-camera.mp4
+          test "$(stat -c%s docs/media/gesture-in-camera.mp4)" -gt 100000
+          file docs/media/gesture-in-camera.mp4
+
+      - name: Build clean shared Asperito logo assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages pillow numpy
+          python3 scripts/clean_asperito_logo.py
+          file docs/asperito-logo.png docs/asperito-favicon.png FrameGuide/Assets.xcassets/AppIcon.appiconset/icon.png
+
+      - name: Commit actual screenshots to GitHub documentation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/ docs/director.jpg docs/media/gesture-in-camera.mp4 docs/asperito-logo.png docs/asperito-favicon.png FrameGuide/Assets.xcassets/AppIcon.appiconset/icon.png FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg
+          if git diff --cached --quiet; then
+            echo "Screenshot files already current."
+          else
+            git commit -m "docs: embed 23 verified iOS Simulator screenshots"
+            git push origin HEAD:feat/ios-mvp
+          fi
+
+      - name: Check screenshot gallery and website code
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check docs/app.js
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          root=Path("docs")
+          assert len(list((root/"screenshots").glob("*.png")))==23, "Expected 23 screenshot PNGs"
+          assert (root/"asperito-logo.png").stat().st_size>100000, "Clean full-size logo missing"
+          assert (root/"asperito-favicon.png").stat().st_size>1000, "Favicon missing"
+          movie=root/"media/gesture-in-camera.mp4"
+          assert movie.exists() and movie.stat().st_size>100000, "Missing real in-app gesture recording"
+          class Page(HTMLParser):
+              def __init__(self): super().__init__(); self.images=[]; self.links=[]
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  if tag=="img": self.images.append(a.get("src",""))
+                  if tag=="script": self.links.append(a.get("src",""))
+                  if tag=="link" and a.get("rel")=="stylesheet" and a.get("href","").startswith("./"): self.links.append(a["href"])
+          p=Page(); p.feed((root/"index.html").read_text())
+          for src in p.images+p.links:
+              if src.startswith("./"): assert (root/src[2:].split("?",1)[0]).exists(), f"Missing {src}"
+          assert len(p.images)>=10
+          print(f"Verified {len(p.images)} website images, all scripts and CSS, and 23 source screenshots")
+          PY
+
+      - name: Render desktop and iPhone website previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site-preview
+          npm install --prefix /tmp/asperito-browser --no-save playwright@1.58.2
+          /tmp/asperito-browser/node_modules/.bin/playwright install chromium
+          python3 -m http.server 8765 --directory docs > /tmp/asperito-http.log 2>&1 &
+          echo $! > /tmp/asperito-http.pid
+          node <<'JS'
+          const {chromium}=require("/tmp/asperito-browser/node_modules/playwright");
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const base="http://127.0.0.1:8765/";
+            for (const [name,width,height,isMobile] of [["desktop",1440,900,false],["iphone",390,844,true]]) {
+              const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1,isMobile,hasTouch:isMobile,reducedMotion:"reduce"});
+              await page.goto(base,{waitUntil:"networkidle"});
+              await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
+              // The selected camera design must be clearly showcased,
+              // with the full real Simulator screen visible at mobile size.
+              const chosen=page.locator("#camera-design");
+              if(!(await chosen.isVisible()))throw Error("Selected Cinematic Minimal section missing");
+              if(!(await chosen.getByRole("heading",{name:/Cinematic\s*Minimal/i}).count()))
+                throw Error("Cinematic Minimal title missing");
+              const selectedImage=chosen.locator("img");
+              const bounds=await selectedImage.evaluate(img=>{
+                const r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();
+                return {naturalWidth:img.naturalWidth,width:r.width,height:r.height,
+                  top:r.top,bottom:r.bottom,parentBottom:p.bottom,
+                  viewport:document.documentElement.clientWidth,
+                  left:r.left,right:r.right};
+              });
+              if(bounds.naturalWidth<1000||bounds.width<190||bounds.height<410)
+                throw Error("Selected camera screenshot missing or too small: "+JSON.stringify(bounds));
+              if(bounds.left<0||bounds.right>bounds.viewport+1||bounds.bottom>bounds.parentBottom+1)
+                throw Error("Selected camera screenshot clipped: "+JSON.stringify(bounds));
+              const heroImage=page.locator(".hero-device img");
+              if(!(await heroImage.evaluate(img=>img.complete&&img.naturalWidth>1000)))
+                throw Error("Cinematic Minimal hero screenshot missing");
+              const heroSrc=await page.locator(".hero-device img").getAttribute("src");
+              if(!heroSrc?.includes("overlay-goldenSpiral.png"))
+                throw Error("Cover must display the Golden Spiral, got "+heroSrc);
+              if(!(await page.locator(".hero-device img").evaluate(img=>img.complete&&img.naturalWidth>0)))
+                throw Error("Golden Spiral hero screenshot failed to load");
+              const firstGallery=page.locator("#screen-carousel figure").first();
+              const firstSrc=await firstGallery.locator("img").getAttribute("src");
+              if(!firstSrc?.includes("overlay-goldenSpiral.png"))
+                throw Error("First gallery item must be Golden Spiral, got "+firstSrc);
+              if(!(await firstGallery.locator("img").evaluate(img=>img.complete&&img.naturalWidth>0)))
+                throw Error("Golden Spiral gallery screenshot failed to load");
+              if(!(await firstGallery.locator("figcaption").innerText()).includes("Golden Spiral"))
+                throw Error("First gallery caption should say Golden Spiral");
+              const cameraShowcase=await page.locator("#camera-design img").getAttribute("src");
+              if(!cameraShowcase?.includes("screenshots/camera.png"))
+                throw Error("Keep Cinematic Minimal camera as supporting showcase");
+              const carousel=page.locator("#guide-carousel");
+              if(!(await carousel.count()))throw Error("Guide carousel missing");
+              const expected=await page.locator("#guide-next").count();
+              if(expected!==1||!(await page.locator("#guide-prev").count()))
+                throw Error("Guide carousel navigation missing");
+              const ids=["thirds","goldenGrid","goldenSpiral","center","diagonal",
+                "square","horizon","eyeLine","safeArea","perspective","cinematic",
+                "custom","leadingLines","reflection","goldenTriangle","frameWithinFrame",
+                "negativeSpace","sCurve"];
+              for (let index=0;index<ids.length;index++) {
+                const id=ids[index];
+                await page.waitForFunction(({id,index})=>
+                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-"+id+".png") &&
+                  document.querySelector(".guide-progress")?.getAttribute("aria-valuenow")===String(index+1),
+                  {id,index},{timeout:5000});
+                if (!(await page.locator("#guide-image").evaluate(img=>img.complete&&img.naturalWidth>0))) {
+                  throw Error("Missing carousel screenshot: "+id);
+                }
+                await page.locator("#guide-next").click();
+              }
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-thirds.png"),
+                {timeout:5000});
+              await page.locator("#guide-prev").click();
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-sCurve.png"),
+                {timeout:5000});
+              await carousel.focus();
+              await page.keyboard.press("ArrowRight");
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-thirds.png"),
+                {timeout:5000});
+              if(isMobile){
+                const stage=await carousel.boundingBox();
+                await page.evaluate(({x,y})=>{
+                  const elem=document.querySelector("#guide-carousel");
+                  const start=new Touch({identifier:1,target:elem,clientX:x+160,clientY:y+100});
+                  const end=new Touch({identifier:1,target:elem,clientX:x+50,clientY:y+102});
+                  elem.dispatchEvent(new TouchEvent("touchstart",{touches:[start],changedTouches:[start],bubbles:true}));
+                  elem.dispatchEvent(new TouchEvent("touchend",{touches:[],changedTouches:[end],bubbles:true}));
+                },{x:stage.x,y:stage.y});
+                await page.waitForFunction(() =>
+                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-goldenGrid.png"),
+                  {timeout:5000});
+              }
+              const gesture=page.locator("#gesture");
+              if(!(await gesture.isVisible()))throw Error("Camera tutorial section absent");
+              const movie=page.locator("#gesture-video");
+              if(!(await movie.count()))throw Error("Actual camera movie absent");
+              const source=await movie.locator("source").getAttribute("src");
+              if(source!=="./media/gesture-in-camera.mp4")throw Error("Not playing real simulator recording");
+              await page.locator("#gesture-replay").click();
+              await page.waitForFunction(()=>document.querySelector("#gesture-video")?.currentTime>0,{timeout:6000});
+              await page.locator("#gesture-pause").click();
+              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="true")
+                throw Error("Pause control broken");
+              await page.locator("#gesture-replay").click();
+              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
+                throw Error("Replay control broken");
+              if (isMobile) {
+                const geometry=await page.locator(".feature-wide").evaluate(card=>{
+                  const words=card.querySelector(".feature-words");
+                  const image=card.querySelector(".feature-visual");
+                  const cardBox=card.getBoundingClientRect();
+                  const wordsBox=words.getBoundingClientRect();
+                  const imageBox=image.getBoundingClientRect();
+                  return {
+                    card:{left:cardBox.left,right:cardBox.right},
+                    wordsBottom:wordsBox.bottom,
+                    imageTop:imageBox.top,
+                    imageLeft:imageBox.left,
+                    imageRight:imageBox.right,
+                    transform:getComputedStyle(image).transform,
+                    imageLoaded:image.querySelector("img").naturalWidth>0
+                  };
+                });
+                if (geometry.transform!=="none")throw Error("Mobile feature image must not be rotated: "+JSON.stringify(geometry));
+                if (!geometry.imageLoaded || geometry.imageTop<geometry.wordsBottom-1)
+                  throw Error("Feature screenshot overlaps its text: "+JSON.stringify(geometry));
+                if (geometry.imageLeft<geometry.card.left-1 || geometry.imageRight>geometry.card.right+1)
+                  throw Error("Feature screenshot clipped horizontally: "+JSON.stringify(geometry));
+              }
+              const overflow=await page.evaluate(() =>
+                document.documentElement.scrollWidth > window.innerWidth + 8);
+              if(overflow)throw Error("Horizontal overflow on "+name);
+              await page.evaluate(()=>window.scrollTo(0,0));
+              await page.screenshot({path:"site-preview/"+name+".png",fullPage:true,animations:"disabled"});
+              await page.close();
+            }
+            // Video pixels are captured from a real Simulator application.
+            // Verify media playback, reduced-motion no-autoplay, and UI controls.
+            const motionPage=await browser.newPage({viewport:{width:1000,height:800},reducedMotion:"no-preference"});
+            await motionPage.goto(base,{waitUntil:"networkidle"});
+            await motionPage.locator("#gesture-replay").click();
+            await motionPage.waitForFunction(() =>
+              document.querySelector("#gesture-video")?.currentTime>.5,{timeout:9000});
+            const mediaInfo=await motionPage.locator("#gesture-video").evaluate(video=>({
+              duration:video.duration,readyState:video.readyState,width:video.videoWidth,height:video.videoHeight
+            }));
+            if(!(mediaInfo.duration>5&&mediaInfo.width>0&&mediaInfo.height>0))
+              throw Error("Simulator gesture video unreadable: "+JSON.stringify(mediaInfo));
+            await motionPage.close();
+            const accessibilityPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,reducedMotion:"reduce"});
+            await accessibilityPage.goto(base,{waitUntil:"networkidle"});
+            const notAutoplaying=await accessibilityPage.locator("#gesture-video").evaluate(video=>video.paused);
+            if(!notAutoplaying)throw Error("Reduced motion should disable video autoplay");
+            await accessibilityPage.close();
+            await browser.close();
+          })().catch(error=>{console.error(error);process.exit(1)});
+          JS
+
+      - name: Upload website preview screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asperito-site-desktop-mobile-preview
+          path: site-preview/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload responsive website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Report publishing result
+        if: always()
+        run: |
+          {
+            echo "### Asperito immersive website"
+            echo "- Source: docs/index.html, docs/style.css, docs/app.js"
+            echo "- Screenshots: 23 real Simulator captures (synthetic landscape under live SwiftUI guides)"
+            echo "- GitHub Pages: https://prabhuvikas.github.io/Asperito/"
+            echo "- If Pages configuration fails, enable **Settings → Pages → Build and deployment → GitHub Actions** and rerun this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"

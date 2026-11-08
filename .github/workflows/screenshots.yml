@@ -1,0 +1,176 @@
+name: iOS Actual Screenshots
+
+on:
+  pull_request:
+    paths:
+      - 'FrameGuide/**'
+      - 'FrameGuide.xcodeproj/**'
+      - '.github/workflows/screenshots.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshot-capture:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@v6
+
+      - name: Select iPhone Simulator and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcrun simctl list devices available
+          UDID=$(xcrun simctl list devices available --json | python3 -c '
+          import sys,json
+          data=json.load(sys.stdin)["devices"]
+          phones=[x for devices in data.values() for x in devices
+                  if x.get("isAvailable") and x["name"].startswith("iPhone")]
+          if not phones: raise SystemExit("No available iPhone Simulator")
+          print(phones[0]["udid"])
+          ')
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+          xcodebuild -project FrameGuide.xcodeproj -scheme FrameGuide \
+            -configuration Debug -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$UDID" \
+            -derivedDataPath "$PWD/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO build > simulator-build.log 2>&1
+
+      - name: Capture running app views
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p screenshots
+          UDID="$SIMULATOR_UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100 || true
+          xcrun simctl install "$UDID" "$PWD/DerivedData/Build/Products/Debug-iphonesimulator/FrameGuide.app"
+          BUNDLE_ID="com.frameguide.ios"
+          python3 - <<'PY'
+          import subprocess, time, os, pathlib, sys
+          udid = os.environ["SIMULATOR_UDID"]
+          bundle = "com.frameguide.ios"
+          for screen in ("onboarding","camera","picker","tutorial","settings",
+               "overlay-thirds","overlay-goldenGrid","overlay-goldenSpiral",
+               "overlay-center","overlay-diagonal","overlay-square",
+               "overlay-horizon","overlay-eyeLine","overlay-safeArea",
+               "overlay-perspective","overlay-cinematic","overlay-custom",
+               "overlay-leadingLines","overlay-reflection","overlay-goldenTriangle",
+               "overlay-frameWithinFrame","overlay-negativeSpace","overlay-sCurve"):
+              target=pathlib.Path("screenshots")/f"{screen}.png"
+              captured=False
+              for attempt in range(1,5):
+                  print(f"Capture {screen}: attempt {attempt}",flush=True)
+                  try:
+                      subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
+                  except subprocess.TimeoutExpired:
+                      print("Simulator termination timed out",flush=True)
+                  try:
+                      result=subprocess.run(["xcrun","simctl","launch",udid,bundle,
+                                             f"--asperito-screen={screen}"],
+                                            capture_output=True,text=True,timeout=60)
+                      print("Launch",result.returncode,result.stdout,result.stderr,flush=True)
+                      if result.returncode:
+                          time.sleep(2)
+                          continue
+                      time.sleep(3 + attempt * 2)
+                      shot=subprocess.run(["xcrun","simctl","io",udid,"screenshot",str(target)],
+                                          capture_output=True,text=True,timeout=60)
+                      if shot.returncode:
+                          print("Screenshot failure",shot.stderr,flush=True)
+                          continue
+                      size=target.stat().st_size
+                      print("Bytes",size,flush=True)
+                      if size >= 120000:
+                          captured=True
+                          break
+                  except subprocess.TimeoutExpired:
+                      print("Timed out; retrying",flush=True)
+                  time.sleep(2)
+              if not captured:
+                  raise SystemExit(f"Failed to capture readable screen: {screen}")
+          PY
+          file screenshots/*.png
+          ls -lh screenshots/
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in sorted(Path("screenshots").glob("*.png")):
+              size=path.stat().st_size
+              print(path.name, size)
+              if size < 120000:
+                  raise SystemExit(f"Screenshot looks incomplete/blank: {path.name} ({size} bytes)")
+          PY
+          test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "23"
+
+      - name: Record actual in-camera gesture animation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p gesture-video
+          python3 - <<'PY'
+          import os,subprocess,time,signal,pathlib
+          udid=os.environ["SIMULATOR_UDID"]
+          bundle="com.frameguide.ios"
+          out=pathlib.Path("gesture-video/gesture-in-camera.mp4")
+          subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
+          launch=subprocess.run(["xcrun","simctl","launch",udid,bundle,"--asperito-screen=gesture"],
+                                capture_output=True,text=True,timeout=60)
+          if launch.returncode: raise RuntimeError("Gesture camera failed to launch: "+launch.stderr)
+          time.sleep(2)
+          command=["xcrun","simctl","io",udid,"recordVideo","--codec=h264","--force",str(out)]
+          recorder=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+          try:
+              time.sleep(8)
+          finally:
+              recorder.send_signal(signal.SIGINT)
+              try: stdout,stderr=recorder.communicate(timeout=35)
+              except subprocess.TimeoutExpired:
+                  recorder.kill()
+                  stdout,stderr=recorder.communicate()
+                  raise RuntimeError("Simulator video recorder timed out")
+          print("Recording output:",stderr.decode(errors="replace")[-1600:])
+          if recorder.returncode not in (0,130): raise RuntimeError(f"recordVideo exited {recorder.returncode}")
+          if not out.exists() or out.stat().st_size < 100000:
+              raise RuntimeError("Missing or incomplete in-app camera gesture movie")
+          print("Actual in-app gesture video:",out,"bytes:",out.stat().st_size)
+          PY
+          file gesture-video/gesture-in-camera.mp4
+          # macOS Actions runners do not guarantee ffprobe. Browser validation
+          # later decodes the video and checks playback duration and dimensions.
+          python3 - <<'PY'
+          from pathlib import Path
+          movie=Path("gesture-video/gesture-in-camera.mp4")
+          data=movie.read_bytes()
+          assert len(data)>100000, "Recording too small"
+          assert b"ftyp" in data[:64], "Invalid MP4 container signature"
+          print("Verified MP4 signature and",len(data),"bytes")
+          PY
+
+      - name: Upload actual in-camera gesture video
+        uses: actions/upload-artifact@v6
+        with:
+          name: asperito-in-camera-gesture-video
+          path: gesture-video/gesture-in-camera.mp4
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload unmodified screenshots
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: asperito-all-23-screens
+          path: screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload simulator diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: asperito-simulator-diagnostics
+          path: simulator-build.log
+          if-no-files-found: ignore
