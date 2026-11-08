@@ -20,6 +20,13 @@ struct CameraView: View {
     @AppStorage("overlay.perspectiveY") private var perspectiveY = 0.38
     @AppStorage("overlay.safeRatio") private var safeRatio = 0.8
     @AppStorage("overlay.cinemaRatio") private var cinemaRatio = 2.39
+    @AppStorage("overlay.focusX") private var focusX = 0.5
+    @AppStorage("overlay.focusY") private var focusY = 0.5
+    @AppStorage("overlay.guideRotation") private var guideRotation = 0
+    @AppStorage("overlay.guideMirrored") private var guideMirrored = false
+    @AppStorage("overlay.guideScale") private var guideScale = 0.7
+    @AppStorage("overlay.reflectionHorizontal") private var reflectionHorizontal = false
+    @AppStorage("overlay.curveBend") private var curveBend = 0.5
     @AppStorage("camera.timer") private var timerSeconds = 0
     @AppStorage("onboarding.complete") private var onboardingComplete = false
 
@@ -45,7 +52,11 @@ struct CameraView: View {
         GuideSettings(customRows:rows,customColumns:columns,eyeLinePosition:eyeLine,
                       perspectivePoint:CGPoint(x:perspectiveX,y:perspectiveY),
                       spiralTurns:spiralTurns,spiralMirrored:spiralMirrored,
-                      safeAreaRatio:safeRatio,cinematicRatio:cinemaRatio)
+                      safeAreaRatio:safeRatio,cinematicRatio:cinemaRatio,
+                      focusPoint:CGPoint(x:focusX,y:focusY),
+                      guideRotation:guideRotation,guideMirrored:guideMirrored,
+                      guideScale:guideScale,reflectionHorizontal:reflectionHorizontal,
+                      curveBend:curveBend)
     }
 
     var body: some View {
@@ -287,6 +298,9 @@ struct CameraView: View {
                           spiralMirrored:$spiralMirrored,eyeLine:$eyeLine,
                           perspectiveX:$perspectiveX,perspectiveY:$perspectiveY,
                           safeRatio:$safeRatio,cinemaRatio:$cinemaRatio,
+                          focusX:$focusX,focusY:$focusY,guideRotation:$guideRotation,
+                          guideMirrored:$guideMirrored,guideScale:$guideScale,
+                          reflectionHorizontal:$reflectionHorizontal,curveBend:$curveBend,
                           onLearn:{ showingPicker = false; DispatchQueue.main.asyncAfter(deadline:.now()+0.35) { showingLesson = true } })
             .presentationDetents([.medium,.large])
     }

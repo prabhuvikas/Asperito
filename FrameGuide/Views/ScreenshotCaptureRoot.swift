@@ -16,6 +16,13 @@ struct ScreenshotCaptureRoot: View {
     @State private var perspectiveY = 0.38
     @State private var safeRatio = 0.8
     @State private var cinemaRatio = 2.39
+    @State private var focusX = 0.5
+    @State private var focusY = 0.5
+    @State private var guideRotation = 0
+    @State private var guideMirrored = false
+    @State private var guideScale = 0.7
+    @State private var reflectionHorizontal = false
+    @State private var curveBend = 0.5
     @State private var colorRaw = GuideColor.white.rawValue
     @State private var opacity = 0.82
     @State private var visible = true
@@ -30,7 +37,10 @@ struct ScreenshotCaptureRoot: View {
                               spiralTurns: $turns, spiralMirrored: $mirror,
                               eyeLine: $eyeLine, perspectiveX: $perspectiveX,
                               perspectiveY: $perspectiveY, safeRatio: $safeRatio,
-                              cinemaRatio: $cinemaRatio, onLearn: {})
+                              cinemaRatio: $cinemaRatio, focusX:$focusX,focusY:$focusY,
+                              guideRotation:$guideRotation,guideMirrored:$guideMirrored,
+                              guideScale:$guideScale,reflectionHorizontal:$reflectionHorizontal,
+                              curveBend:$curveBend,onLearn: {})
         case "tutorial":
             TutorialView(kind: .goldenSpiral, onApply: {})
         case "settings":

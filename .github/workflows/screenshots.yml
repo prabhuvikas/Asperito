@@ -58,7 +58,9 @@ jobs:
                "overlay-thirds","overlay-goldenGrid","overlay-goldenSpiral",
                "overlay-center","overlay-diagonal","overlay-square",
                "overlay-horizon","overlay-eyeLine","overlay-safeArea",
-               "overlay-perspective","overlay-cinematic","overlay-custom"):
+               "overlay-perspective","overlay-cinematic","overlay-custom",
+               "overlay-leadingLines","overlay-reflection","overlay-goldenTriangle",
+               "overlay-frameWithinFrame","overlay-negativeSpace","overlay-sCurve"):
               target=pathlib.Path("screenshots")/f"{screen}.png"
               captured=False
               for attempt in range(1,5):
@@ -102,13 +104,13 @@ jobs:
               if size < 120000:
                   raise SystemExit(f"Screenshot looks incomplete/blank: {path.name} ({size} bytes)")
           PY
-          test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "17"
+          test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "23"
 
       - name: Upload unmodified screenshots
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: asperito-all-17-screens
+          name: asperito-all-23-screens
           path: screenshots/*.png
           if-no-files-found: warn
           retention-days: 14

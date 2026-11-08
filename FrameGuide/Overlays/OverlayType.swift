@@ -3,6 +3,7 @@ import SwiftUI
 enum OverlayKind: String, CaseIterable, Identifiable, Codable {
     case thirds, goldenGrid, goldenSpiral, center, diagonal, square
     case horizon, eyeLine, safeArea, perspective, cinematic, custom
+    case leadingLines, reflection, goldenTriangle, frameWithinFrame, negativeSpace, sCurve
 
     var id: String { rawValue }
     var title: String {
@@ -19,6 +20,12 @@ enum OverlayKind: String, CaseIterable, Identifiable, Codable {
         case .perspective: "Perspective Lines"
         case .cinematic: "Cinematic Frame"
         case .custom: "Custom Grid"
+        case .leadingLines: "Leading Lines"
+        case .reflection: "Symmetry & Reflection"
+        case .goldenTriangle: "Golden Triangle"
+        case .frameWithinFrame: "Frame Within Frame"
+        case .negativeSpace: "Negative Space"
+        case .sCurve: "S-Curve"
         }
     }
     var symbol: String {
@@ -33,6 +40,12 @@ enum OverlayKind: String, CaseIterable, Identifiable, Codable {
         case .safeArea: "aspectratio"
         case .perspective: "point.topleft.down.curvedto.point.bottomright.up"
         case .cinematic: "film"
+        case .leadingLines: "arrow.up.forward"
+        case .reflection: "square.split.2x1"
+        case .goldenTriangle: "triangle"
+        case .frameWithinFrame: "square.on.square"
+        case .negativeSpace: "circle.dotted"
+        case .sCurve: "point.topleft.down.to.point.bottomright.curvepath"
         }
     }
 }
@@ -75,4 +88,10 @@ struct GuideSettings {
     var spiralMirrored: Bool = false
     var safeAreaRatio: CGFloat = 4.0 / 5.0
     var cinematicRatio: CGFloat = 2.39
+    var focusPoint: CGPoint = CGPoint(x: 0.5, y: 0.5)
+    var guideRotation: Int = 0
+    var guideMirrored: Bool = false
+    var guideScale: CGFloat = 0.7
+    var reflectionHorizontal: Bool = false
+    var curveBend: CGFloat = 0.5
 }

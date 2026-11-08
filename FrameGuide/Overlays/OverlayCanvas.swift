@@ -46,6 +46,17 @@ struct OverlayCanvas: View {
                 }
                 return
             }
+            if [.leadingLines, .reflection, .goldenTriangle, .frameWithinFrame, .negativeSpace, .sCurve].contains(kind) {
+                for guide in OverlayGeometry.lines(for:kind,in:bounds,settings:settings) {
+                    let ink = guide.accent ? AsperitoPalette.gold : Color.white
+                    let strength = guide.dashed ? 0.40 : guide.accent ? 1.0 : 0.65
+                    let line = StrokeStyle(lineWidth:guide.accent ? 2.3 : 1.0,
+                                           lineCap:.round,lineJoin:.round,
+                                           dash:guide.dashed ? [5,5] : [])
+                    context.stroke(guide.path,with:.color(ink.opacity(opacity * strength)),style:line)
+                }
+                return
+            }
             for guide in OverlayGeometry.lines(for:kind,in:bounds,settings:settings) {
                 let stroke = StrokeStyle(lineWidth:guide.accent ? 1.8 : 1, dash:guide.dashed ? [7,5] : [])
                 context.stroke(guide.path, with:.color(color.opacity(opacity)), style:stroke)

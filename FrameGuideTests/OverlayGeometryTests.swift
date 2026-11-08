@@ -6,18 +6,57 @@ final class OverlayGeometryTests: XCTestCase {
     let portrait = CGRect(x: 0, y: 0, width: 300, height: 400)
     let landscape = CGRect(x: 0, y: 0, width: 400, height: 300)
 
-    func testExactlyTwelveDistinctGuides() {
-        XCTAssertEqual(OverlayKind.allCases.count, 12)
+    func testExactlyEighteenDistinctGuides() {
+        XCTAssertEqual(OverlayKind.allCases.count, 18)
         XCTAssertEqual(Set(OverlayKind.allCases.map(\.rawValue)).count, 12)
     }
 
-    func testAllTwelveGuidesRenderAtBothOrientations() {
+    func testAllEighteenGuidesRenderAtBothOrientations() {
         for kind in OverlayKind.allCases {
             for bounds in [portrait, landscape] {
                 XCTAssertFalse(OverlayGeometry.lines(for: kind, in: bounds).isEmpty,
                                "\(kind.title) should render at \(bounds.size)")
             }
         }
+    }
+
+    func testSixAdvancedGuidesRemainWithinViewfinder() {
+        let kinds: [OverlayKind] = [.leadingLines, .reflection, .goldenTriangle,
+                                    .frameWithinFrame, .negativeSpace, .sCurve]
+        for frame in [portrait, landscape] {
+            for kind in kinds {
+                for rotation in 0..<4 {
+                    for mirrored in [false,true] {
+                        let settings = GuideSettings(
+                            focusPoint:CGPoint(x:0.36,y:0.63),guideRotation:rotation,
+                            guideMirrored:mirrored,guideScale:0.55,curveBend:0.75)
+                        let guides=OverlayGeometry.lines(for:kind,in:frame,settings:settings)
+                        XCTAssertFalse(guides.isEmpty,"Missing \(kind.title)")
+                        XCTAssertTrue(guides.contains(where:{$0.accent}),"Missing highlighted guide for \(kind.title)")
+                        for guide in guides {
+                            let box=guide.path.boundingRect
+                            XCTAssertGreaterThanOrEqual(box.minX,frame.minX-0.25)
+                            XCTAssertGreaterThanOrEqual(box.minY,frame.minY-0.25)
+                            XCTAssertLessThanOrEqual(box.maxX,frame.maxX+0.25)
+                            XCTAssertLessThanOrEqual(box.maxY,frame.maxY+0.25)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func testAdvancedGuideControlsChangeGeometry() {
+        let original=GuideSettings()
+        let moved=GuideSettings(focusPoint:CGPoint(x:0.7,y:0.4))
+        for kind in [OverlayKind.leadingLines,.frameWithinFrame,.negativeSpace] {
+            let a=OverlayGeometry.lines(for:kind,in:portrait,settings:original)[0].path.boundingRect
+            let b=OverlayGeometry.lines(for:kind,in:portrait,settings:moved)[0].path.boundingRect
+            XCTAssertNotEqual(a,b,"Focus adjustment has no effect on \(kind.title)")
+        }
+        let a=OverlayGeometry.lines(for:.sCurve,in:portrait,settings:GuideSettings(curveBend:0.2))[0].path
+        let b=OverlayGeometry.lines(for:.sCurve,in:portrait,settings:GuideSettings(curveBend:0.8))[0].path
+        XCTAssertNotEqual(a.boundingRect,b.boundingRect,"Bend must change the S-curve")
     }
 
     func testThirdsAndGoldenRatioHaveFourLines() {
