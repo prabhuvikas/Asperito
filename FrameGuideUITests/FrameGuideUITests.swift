@@ -28,7 +28,13 @@ final class FrameGuideUITests: XCTestCase {
                      "Portrait Eye Line","Social Safe Area","Perspective Lines",
                      "Cinematic Frame","Custom Grid","Leading Lines","Symmetry & Reflection",
                      "Golden Triangle","Frame Within Frame","Negative Space","S-Curve"] {
-            XCTAssertTrue(app.buttons["Choose \(name)"].exists,"Missing \(name)")
+            let guide = app.buttons["Choose \(name)"]
+            var attempts = 0
+            while !guide.exists && attempts < 12 {
+                app.swipeUp()
+                attempts += 1
+            }
+            XCTAssertTrue(guide.exists, "Missing \(name)")
         }
     }
     func testChooseGoldenSpiralAndOpenLesson() {
