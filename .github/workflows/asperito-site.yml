@@ -110,6 +110,7 @@ jobs:
             for (const [name,width,height,isMobile] of [["desktop",1440,900,false],["iphone",390,844,true]]) {
               const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1,isMobile,hasTouch:isMobile,reducedMotion:"reduce"});
               await page.goto(base,{waitUntil:"networkidle"});
+              await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
               const expected=await page.locator(".guide-option").count();
               if(expected!==12)throw Error("Expected 12 interactive composition guides; found "+expected);
               await page.locator('[data-guide="goldenSpiral"]').click();
