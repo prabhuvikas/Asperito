@@ -75,13 +75,20 @@ final class OverlayGeometryTests: XCTestCase {
     }
 
     func testSpiralSupportsRotationAndMirroring() {
-        let normal = OverlayGeometry.lines(for: .goldenSpiral, in: portrait).first!.path.boundingRect
-        let rotated = OverlayGeometry.lines(for: .goldenSpiral, in: portrait,
-                         settings: GuideSettings(spiralTurns: 1)).first!.path.boundingRect
-        let mirrored = OverlayGeometry.lines(for: .goldenSpiral, in: portrait,
-                          settings: GuideSettings(spiralMirrored: true)).first!.path.boundingRect
-        XCTAssertNotEqual(normal.minX, rotated.minX)
-        XCTAssertNotEqual(normal.minX, mirrored.minX)
+        func startingPoint(_ path: Path) -> CGPoint {
+            var first: CGPoint?
+            path.forEach { element in
+                if case let .move(to: point) = element, first == nil { first = point }
+            }
+            return first ?? .zero
+        }
+        let normal = startingPoint(OverlayGeometry.lines(for: .goldenSpiral, in: portrait)[0].path)
+        let rotated = startingPoint(OverlayGeometry.lines(for: .goldenSpiral, in: portrait,
+                          settings: GuideSettings(spiralTurns: 1))[0].path)
+        let mirrored = startingPoint(OverlayGeometry.lines(for: .goldenSpiral, in: portrait,
+                          settings: GuideSettings(spiralMirrored: true))[0].path)
+        XCTAssertNotEqual(normal, rotated)
+        XCTAssertNotEqual(normal, mirrored)
     }
 
     func testFramingGuideMatchesDesiredRatioAndFitsPreview() {
