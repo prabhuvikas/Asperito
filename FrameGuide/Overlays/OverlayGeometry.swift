@@ -64,8 +64,7 @@ enum OverlayGeometry {
 
         // Fit the golden rectangle to the current preview in either orientation.
         let portrait = bounds.height >= bounds.width
-        let goldenAspect: CGFloat = portrait ? CGFloat(1 / phi) : CGFloat(phi)
-        let base = framingRect(inside: bounds, targetAspect: goldenAspect)
+        let base = framingRect(inside: bounds, targetAspect: CGFloat(1 / phi))
         var available = base
         var spiral = Path()
         var construction: [GuideStroke] = []
@@ -139,17 +138,17 @@ enum OverlayGeometry {
 
         // Rotation and mirroring remain available from the guide picker.
         // Uniformly scale after rotation so no line runs outside preview.
-        let quarterTurns = ((settings.spiralTurns % 4) + 4) % 4
+        let quarterTurns = (((settings.spiralTurns % 4) + 4) % 4 + (portrait ? 0 : 1)) % 4
         let rotation = CGFloat(quarterTurns) * .pi / 2
         let rotatedWidth = quarterTurns.isMultiple(of: 2) ? base.width : base.height
         let rotatedHeight = quarterTurns.isMultiple(of: 2) ? base.height : base.width
         let scale = min(1, min(bounds.width / rotatedWidth, bounds.height / rotatedHeight))
         let centerX = bounds.midX, centerY = bounds.midY
-        var transform = CGAffineTransform(translationX: -centerX, y: -centerY)
-        if settings.spiralMirrored { transform = transform.scaledBy(x: -1, y: 1) }
+        var transform = CGAffineTransform(translationX: centerX, y: centerY)
         transform = transform.rotated(by: rotation)
         transform = transform.scaledBy(x: scale, y: scale)
-        transform = transform.translatedBy(x: centerX, y: centerY)
+        if settings.spiralMirrored { transform = transform.scaledBy(x: -1, y: 1) }
+        transform = transform.translatedBy(x: -centerX, y: -centerY)
         return strokes.map { stroke in
             GuideStroke(path: stroke.path.applying(transform),
                         accent: stroke.accent, dashed: stroke.dashed)
