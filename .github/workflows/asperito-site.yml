@@ -66,6 +66,70 @@ jobs:
             git push origin HEAD:feat/ios-mvp
           fi
 
+      - name: Check screenshot gallery and website code
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check docs/app.js
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          root=Path("docs")
+          assert len(list((root/"screenshots").glob("*.png")))==17, "Expected 17 screenshot PNGs"
+          class Page(HTMLParser):
+              def __init__(self): super().__init__(); self.images=[]; self.links=[]
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  if tag=="img": self.images.append(a.get("src",""))
+                  if tag=="script": self.links.append(a.get("src",""))
+                  if tag=="link" and a.get("rel")=="stylesheet" and a.get("href","").startswith("./"): self.links.append(a["href"])
+          p=Page(); p.feed((root/"index.html").read_text())
+          for src in p.images+p.links:
+              if src.startswith("./"): assert (root/src[2:]).exists(), f"Missing {src}"
+          assert len(p.images)>=10
+          print(f"Verified {len(p.images)} website images, all scripts and CSS, and 17 source screenshots")
+          PY
+
+      - name: Render desktop and iPhone website previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site-preview
+          npm install --prefix /tmp/asperito-browser --no-save playwright@1.58.2
+          /tmp/asperito-browser/node_modules/.bin/playwright install chromium
+          python3 -m http.server 8765 --directory docs > /tmp/asperito-http.log 2>&1 &
+          echo $! > /tmp/asperito-http.pid
+          node <<'JS'
+          const {chromium}=require("/tmp/asperito-browser/node_modules/playwright");
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const base="http://127.0.0.1:8765/";
+            for (const [name,width,height,isMobile] of [["desktop",1440,900,false],["iphone",390,844,true]]) {
+              const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1,isMobile,hasTouch:isMobile,reducedMotion:"reduce"});
+              await page.goto(base,{waitUntil:"networkidle"});
+              const expected=await page.locator(".guide-option").count();
+              if(expected!==12)throw Error("Expected 12 interactive composition guides; found "+expected);
+              await page.locator('[data-guide="goldenSpiral"]').click();
+              const src=await page.locator("#guide-image").getAttribute("src");
+              if(!src.includes("goldenSpiral"))throw Error("Guide button did not change image");
+              await page.locator('[data-guide="thirds"]').click();
+              await page.evaluate(()=>window.scrollTo(0,0));
+              await page.screenshot({path:"site-preview/"+name+".png",fullPage:true,animations:"disabled"});
+              await page.close();
+            }
+            await browser.close();
+          })().catch(error=>{console.error(error);process.exit(1)});
+          JS
+
+      - name: Upload website preview screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asperito-site-desktop-mobile-preview
+          path: site-preview/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
