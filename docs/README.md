@@ -15,6 +15,12 @@ https://prabhuvikas.github.io/Asperito/
 
 Publishing is configured in `.github/workflows/asperito-site.yml` and targets the `feat/ios-mvp` development branch. **One-time owner action may be required:** open repository Settings → Pages and set Build and deployment source to **GitHub Actions**. Then rerun the **Asperito Website + Screenshots** workflow. After merging the feature branch, update the workflow trigger and checkout ref to `main`.
 
+## Cinematic Minimal simulator refresh
+
+The **Option 1 — Cinematic Minimal** redesign is built and its iOS unit/UI suite and screenshot workflow both passed at commit `c944ec0f8951fb33b0aba1227ba5e9a16d0c1d0e`.
+
+This site's workflow synchronizes all **23 original iPhone Simulator PNGs** from successful screenshot workflow run **42479805572**, including the compact guide selector, quieter header and streamlined camera controls. It also synchronizes the running-app gesture tutorial video from the same simulator run before testing and deploying the site. No generated promotional mockups are substituted for these captures.
+
 ## Accessibility and motion
 
 - Semantic landmarks and headings; keyboard-accessible guide buttons and gallery arrows.
