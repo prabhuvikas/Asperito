@@ -2,9 +2,9 @@
 
 This directory is a fully static, mobile-first GitHub Pages experience for **Asperito**.
 
-- `index.html`: semantic content, live guide selector and screenshot gallery.
+- `index.html`: semantic content, swipeable 18-guide carousel and screenshot gallery.
 - `style.css`: cinematic midnight / champagne-gold visual design, adaptive responsive layouts, scroll transitions, depth, and reduced-motion preferences.
-- `app.js`: interactive composition-guide selector, screenshot carousel navigation, accessible state announcements and scroll reveal.
+- `app.js`: interactive composition-carousel navigation (swipe, arrows, keyboard), screenshot carousel navigation, accessible state announcements and scroll reveal.
 - `screenshots/`: original 23 PNG captures from iPhone Simulator, copied automatically by GitHub Actions.
 - The interactive composition selector and gallery feature 18 guides, including the six new manually adjustable composition modes.
 - `favicon.svg`: minimal framing symbol.

@@ -69,33 +69,23 @@
       <p>Every great photograph is a choice. Find balance, create movement, chase symmetry—or break the rules with intention.</p>
     </section>
 
-    <section class="guide-stage">
+    <section class="guide-stage guide-carousel-stage" id="guide-carousel" aria-roledescription="carousel" aria-label="Live composition guides" tabindex="0">
       <div class="guide-info observe">
         <span class="eyebrow">01 / LIVE COMPOSITION GUIDES</span>
         <div class="guide-index" aria-live="polite"><span id="guide-index">01</span> / 18</div>
-        <h3 id="guide-title">Rule of Thirds</h3>
-        <p id="guide-description">Bring balance to the ordinary. Position subjects along intersections and let the composition breathe.</p>
-        <div class="guide-chooser" id="guide-chooser" role="group" aria-label="Choose a composition guide">
-          <button data-guide="thirds" type="button" class="guide-option is-active" aria-pressed="true">Thirds</button>
-          <button data-guide="goldenGrid" type="button" class="guide-option" aria-pressed="false">Golden ratio</button>
-          <button data-guide="goldenSpiral" type="button" class="guide-option" aria-pressed="false">Spiral</button>
-          <button data-guide="center" type="button" class="guide-option" aria-pressed="false">Center</button>
-          <button data-guide="diagonal" type="button" class="guide-option" aria-pressed="false">Diagonal</button>
-          <button data-guide="square" type="button" class="guide-option" aria-pressed="false">Square</button>
-          <button data-guide="horizon" type="button" class="guide-option" aria-pressed="false">Horizon</button>
-          <button data-guide="eyeLine" type="button" class="guide-option" aria-pressed="false">Eye line</button>
-          <button data-guide="safeArea" type="button" class="guide-option" aria-pressed="false">Safe area</button>
-          <button data-guide="perspective" type="button" class="guide-option" aria-pressed="false">Perspective</button>
-          <button data-guide="cinematic" type="button" class="guide-option" aria-pressed="false">Cinematic</button>
-          <button data-guide="custom" type="button" class="guide-option" aria-pressed="false">Custom</button>
-          <button data-guide="leadingLines" type="button" class="guide-option" aria-pressed="false">Leading lines</button>
-          <button data-guide="reflection" type="button" class="guide-option" aria-pressed="false">Reflection</button>
-          <button data-guide="goldenTriangle" type="button" class="guide-option" aria-pressed="false">Golden triangle</button>
-          <button data-guide="frameWithinFrame" type="button" class="guide-option" aria-pressed="false">Inner frame</button>
-          <button data-guide="negativeSpace" type="button" class="guide-option" aria-pressed="false">Negative space</button>
-          <button data-guide="sCurve" type="button" class="guide-option" aria-pressed="false">S-curve</button>
+        <div class="guide-slide-content" id="guide-slide-content" aria-live="polite" aria-atomic="true">
+          <h3 id="guide-title">Rule of Thirds</h3>
+          <p id="guide-description">Bring balance to the ordinary. Position subjects along intersections and let the composition breathe.</p>
         </div>
-        <p class="guide-hint">Tap any guide to explore its real in-app screenshot.</p>
+        <div class="guide-carousel-controls" aria-label="Composition carousel controls">
+          <button id="guide-prev" type="button" class="guide-arrow" aria-label="Previous composition guide" title="Previous guide"><span aria-hidden="true">←</span></button>
+          <button id="guide-next" type="button" class="guide-arrow guide-arrow-next" aria-label="Next composition guide" title="Next guide"><span aria-hidden="true">→</span></button>
+          <span class="guide-control-tip">Swipe to explore</span>
+        </div>
+        <div class="guide-progress" role="progressbar" aria-label="Composition guide position" aria-valuemin="1" aria-valuemax="18" aria-valuenow="1" aria-valuetext="Rule of Thirds, guide 1 of 18">
+          <div id="guide-progress-fill"></div>
+        </div>
+        <p class="guide-hint">Swipe across the preview, or use the arrows to explore all 18 guides.</p>
       </div>
       <div class="guide-device observe" id="guide-device">
         <div class="guide-glow" aria-hidden="true"></div>

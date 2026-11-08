@@ -20,26 +20,69 @@ const guides=[
 {id:"sCurve",title:"S-Curve",description:"Follow the natural flow of winding roads, rivers and walking paths."}
 ];
 const prefersReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const guideTitle=document.querySelector("#guide-title"),guideDescription=document.querySelector("#guide-description");
-const guideIndex=document.querySelector("#guide-index"),guideImage=document.querySelector("#guide-image"),guideDevice=document.querySelector("#guide-device");
-let activeGuide="thirds",pending=null;
+const guideTitle=document.querySelector("#guide-title");
+const guideDescription=document.querySelector("#guide-description");
+const guideIndex=document.querySelector("#guide-index");
+const guideImage=document.querySelector("#guide-image");
+const guideDevice=document.querySelector("#guide-device");
+const guideCarousel=document.querySelector("#guide-carousel");
+const guideProgress=document.querySelector(".guide-progress");
+const guideProgressFill=document.querySelector("#guide-progress-fill");
+let activeGuide="thirds";
+let pending=null;
 const imageCache=new Map();
 guides.forEach(g=>{const img=new Image();img.src="./screenshots/overlay-"+g.id+".png";imageCache.set(g.id,img)});
 function chooseGuide(id){
-  const idx=guides.findIndex(g=>g.id===id);if(idx<0)return;
-  activeGuide=id;const guide=guides[idx];
-  document.querySelectorAll("[data-guide]").forEach(b=>{const selected=b.dataset.guide===id;b.classList.toggle("is-active",selected);b.setAttribute("aria-pressed",String(selected))});
+  const idx=guides.findIndex(g=>g.id===id);
+  if(idx<0)return;
+  activeGuide=id;
+  const guide=guides[idx];
   guideIndex.textContent=String(idx+1).padStart(2,"0");
-  guideTitle.textContent=guide.title;guideDescription.textContent=guide.description;
+  guideTitle.textContent=guide.title;
+  guideDescription.textContent=guide.description;
+  guideProgress?.setAttribute("aria-valuenow",String(idx+1));
+  guideProgress?.setAttribute("aria-valuetext",guide.title+", guide "+(idx+1)+" of "+guides.length);
+  if(guideProgressFill)guideProgressFill.style.width=((idx+1)/guides.length*100)+"%";
   if(pending)clearTimeout(pending);
   if(!prefersReduced)guideDevice.classList.add("is-switching");
   pending=window.setTimeout(()=>{
     guideImage.src=imageCache.get(id)?.src||"./screenshots/overlay-"+id+".png";
     guideImage.alt=guide.title+" composition guide in the actual Asperito iPhone Simulator app";
     guideDevice.classList.remove("is-switching");
-  },prefersReduced?0:150);
+    pending=null;
+  },prefersReduced?0:140);
 }
-document.querySelectorAll("[data-guide]").forEach(b=>b.addEventListener("click",()=>chooseGuide(b.dataset.guide)));
+function advanceGuide(step){
+  const idx=guides.findIndex(g=>g.id===activeGuide);
+  const next=(idx+step+guides.length)%guides.length;
+  chooseGuide(guides[next].id);
+}
+document.querySelector("#guide-prev")?.addEventListener("click",()=>advanceGuide(-1));
+document.querySelector("#guide-next")?.addEventListener("click",()=>advanceGuide(1));
+// The carousel is keyboard navigable without stealing left/right keys
+// from page controls elsewhere.
+guideCarousel?.addEventListener("keydown",event=>{
+  if(!["ArrowLeft","ArrowRight"].includes(event.key))return;
+  if(event.target instanceof HTMLElement&&event.target.closest("button"))return;
+  event.preventDefault();
+  advanceGuide(event.key==="ArrowRight"?1:-1);
+});
+// Horizontal touch swipes switch one guide. Vertical scrolling stays native.
+let touchStart=null;
+guideCarousel?.addEventListener("touchstart",event=>{
+  if(event.touches.length!==1)return;
+  touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+},{passive:true});
+guideCarousel?.addEventListener("touchend",event=>{
+  if(!touchStart||!event.changedTouches.length)return;
+  const dx=event.changedTouches[0].clientX-touchStart.x;
+  const dy=event.changedTouches[0].clientY-touchStart.y;
+  touchStart=null;
+  if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.35){
+    advanceGuide(dx<0?1:-1);
+  }
+},{passive:true});
+guideCarousel?.addEventListener("touchcancel",()=>{touchStart=null},{passive:true});
 chooseGuide(activeGuide);
 const nav=document.querySelector(".site-nav");
 window.addEventListener("scroll",()=>nav.classList.toggle("is-scrolled",window.scrollY>40),{passive:true});

@@ -105,3 +105,30 @@
   .feature-wide .feature-words { padding:28px 22px 18px; }
   .feature-wide .feature-visual { width:min(190px,64%); height:275px; flex-basis:275px; }
 }
+
+/* Editorial guide carousel — one immersive guide at a time. */
+.guide-carousel-stage{position:relative;touch-action:pan-y}
+.guide-carousel-stage .guide-info{min-width:0}
+.guide-carousel-stage .guide-info h3{min-height:1.15em}
+.guide-carousel-stage .guide-info>p:not(.guide-hint){min-height:92px}
+.guide-carousel-controls{display:flex;align-items:center;gap:12px;margin:34px 0 18px}
+.guide-arrow{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;border:1px solid rgba(232,190,120,.4);background:#202c39;color:var(--ivory);font:500 24px "Manrope",sans-serif;cursor:pointer;transition:background .2s,color .2s,transform .2s}
+.guide-arrow:hover,.guide-arrow:focus-visible{background:var(--gold);color:var(--bg)}
+.guide-arrow:active{transform:scale(.95)}
+.guide-arrow-next{background:var(--gold);color:var(--bg)}
+.guide-control-tip{padding-left:12px;color:var(--muted);font-size:11px;letter-spacing:1.3px;text-transform:uppercase}
+.guide-progress{width:min(320px,100%);height:3px;border-radius:20px;overflow:hidden;background:#334456}
+.guide-progress>div{width:5.5556%;height:100%;background:var(--gold);border-radius:20px;transition:width .3s ease}
+.guide-carousel-stage .guide-hint{margin-top:17px}
+@media(max-width:760px){
+  .guide-carousel-stage{gap:0;padding-top:36px;padding-bottom:72px}
+  .guide-carousel-stage .guide-info h3{min-height:0;margin-bottom:12px}
+  .guide-carousel-stage .guide-info>p:not(.guide-hint){min-height:0;font-size:15px;line-height:1.65}
+  .guide-carousel-stage .guide-index{margin:20px 0 12px}
+  .guide-carousel-controls{margin:23px 0 15px}
+  .guide-arrow{width:48px;height:48px}
+  .guide-carousel-stage .guide-device{min-height:0;padding:28px 0 10px}
+  .guide-carousel-stage .phone-guide{width:min(275px,65vw)}
+  .guide-carousel-stage .guide-glow{width:300px;height:300px;max-width:80vw}
+}
+@media(prefers-reduced-motion:reduce){.guide-progress>div,.guide-arrow{transition:none}}

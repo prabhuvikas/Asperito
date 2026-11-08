@@ -139,23 +139,51 @@ jobs:
               const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1,isMobile,hasTouch:isMobile,reducedMotion:"reduce"});
               await page.goto(base,{waitUntil:"networkidle"});
               await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
-              const expected=await page.locator(".guide-option").count();
-              if(expected!==18)throw Error("Expected 18 interactive composition guides; found "+expected);
+              const carousel=page.locator("#guide-carousel");
+              if(!(await carousel.count()))throw Error("Guide carousel missing");
+              const expected=await page.locator("#guide-next").count();
+              if(expected!==1||!(await page.locator("#guide-prev").count()))
+                throw Error("Guide carousel navigation missing");
               const ids=["thirds","goldenGrid","goldenSpiral","center","diagonal",
                 "square","horizon","eyeLine","safeArea","perspective","cinematic",
                 "custom","leadingLines","reflection","goldenTriangle","frameWithinFrame",
                 "negativeSpace","sCurve"];
-              for (const id of ids) {
-                const button=page.locator('[data-guide="'+id+'"]');
-                await button.click();
-                await page.waitForFunction(value =>
-                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-"+value+".png"), id, {timeout:5000});
-                if (await button.getAttribute("aria-pressed")!=="true") throw Error("Guide state: "+id);
-                if (!(await page.locator("#guide-image").evaluate(img => img.complete && img.naturalWidth>0))) {
-                  throw Error("Missing composition screenshot: "+id);
+              for (let index=0;index<ids.length;index++) {
+                const id=ids[index];
+                await page.waitForFunction(({id,index})=>
+                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-"+id+".png") &&
+                  document.querySelector(".guide-progress")?.getAttribute("aria-valuenow")===String(index+1),
+                  {id,index},{timeout:5000});
+                if (!(await page.locator("#guide-image").evaluate(img=>img.complete&&img.naturalWidth>0))) {
+                  throw Error("Missing carousel screenshot: "+id);
                 }
+                await page.locator("#guide-next").click();
               }
-              await page.locator('[data-guide="thirds"]').click();
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-thirds.png"),
+                {timeout:5000});
+              await page.locator("#guide-prev").click();
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-sCurve.png"),
+                {timeout:5000});
+              await carousel.focus();
+              await page.keyboard.press("ArrowRight");
+              await page.waitForFunction(() =>
+                document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-thirds.png"),
+                {timeout:5000});
+              if(isMobile){
+                const stage=await carousel.boundingBox();
+                await page.evaluate(({x,y})=>{
+                  const elem=document.querySelector("#guide-carousel");
+                  const start=new Touch({identifier:1,target:elem,clientX:x+160,clientY:y+100});
+                  const end=new Touch({identifier:1,target:elem,clientX:x+50,clientY:y+102});
+                  elem.dispatchEvent(new TouchEvent("touchstart",{touches:[start],changedTouches:[start],bubbles:true}));
+                  elem.dispatchEvent(new TouchEvent("touchend",{touches:[],changedTouches:[end],bubbles:true}));
+                },{x:stage.x,y:stage.y});
+                await page.waitForFunction(() =>
+                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-goldenGrid.png"),
+                  {timeout:5000});
+              }
               const gesture=page.locator("#gesture");
               if(!(await gesture.isVisible()))throw Error("Camera tutorial section absent");
               const movie=page.locator("#gesture-video");
