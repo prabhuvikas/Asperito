@@ -30,3 +30,16 @@ One-finger tap-to-focus remains untouched, and the overlay never modifies a capt
 - SwiftUI Canvas applies the rotation to vector paths only. The preview, focus and saved photographs are not transformed.
 
 Gesture behavior needs final testing with two fingers on a physical iPhone; GitHub's iPhone Simulator capture cannot verify multitouch feel.
+
+## Native in-camera motion tutorial
+
+The gesture demonstration now lives **inside the iPhone camera viewfinder**, not just on GitHub Pages:
+
+- On first selection of an eligible, rotatable guide, Asperito presents a brief **Twist two fingers** coaching overlay.
+- The *same* native vector composition overlay rotates between two demonstrated orientations while two translucent fingertip markers trace the motion; the camera feed remains fixed.
+- **Replay** restarts the demonstration; **Try it** dismisses it and exposes the real two-finger camera gesture; **Gesture** beside the Learn action reopens it anytime.
+- The first-use prompt is remembered in `education.rotationCoachSeen`. The demonstration does not alter the selected guide's saved angle or the saved photograph.
+- Reduce Motion displays a still 35-degree example instead of continuous animation.
+- UI tests launch the actual iOS camera fixture in `--asperito-screen=gesture` mode and exercise replay, dismiss and reopen.
+
+This is an animated usage explanation in the real SwiftUI camera UI, not a GIF overlaid onto the final photograph, and not a substitute for physical-device multitouch QA.
