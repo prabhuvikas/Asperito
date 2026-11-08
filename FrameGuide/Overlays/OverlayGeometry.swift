@@ -64,7 +64,18 @@ enum OverlayGeometry {
 
         // Fit the golden rectangle to the current preview in either orientation.
         let portrait = bounds.height >= bounds.width
-        let base = framingRect(inside: bounds, targetAspect: CGFloat(1 / phi))
+        let base: CGRect
+        if portrait {
+            base = framingRect(inside: bounds, targetAspect: CGFloat(1 / phi))
+        } else {
+            // Construct in portrait space, then rotate the resulting rectangle
+            // so the composition guide fills a landscape camera viewfinder.
+            let finalWidth = min(bounds.width, bounds.height * CGFloat(phi))
+            let sourceWidth = finalWidth / CGFloat(phi)
+            base = CGRect(x: bounds.midX - sourceWidth / 2,
+                          y: bounds.midY - finalWidth / 2,
+                          width: sourceWidth, height: finalWidth)
+        }
         var available = base
         var spiral = Path()
         var construction: [GuideStroke] = []
