@@ -46,3 +46,8 @@ python3 -m http.server 8000 --directory docs
 Open http://localhost:8000/ in a browser. The page uses standard HTML/CSS/JavaScript without a build step or external JS dependencies. Google Fonts load if online, with system font fallbacks offline.
 
 The live composition section is a keyboard-accessible, swipeable **18-guide carousel** with previous/next arrows, progress feedback, and a native mobile swipe gesture. It is tested in desktop and mobile browser automation.
+
+
+## Selected camera design visibility (Option 1)
+
+The webpage uses genuine iOS Simulator captures from the **Cinematic Minimal** implementation. The selected design is explicitly featured in the hero, a dedicated full-height `#camera-design` showcase, the Experience card, and the `#screens` gallery. Mobile viewports show the whole camera screenshot (including shutter controls) rather than cropping out the lower panel. Browser tests verify that the actual image loads, has usable display dimensions, remains inside the viewport, and is clearly labeled as Option 1. Screenshot CSS/HTML references include a presentation version to avoid stale in-app Safari caches.

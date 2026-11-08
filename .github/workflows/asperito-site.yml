@@ -149,6 +149,27 @@ jobs:
               const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1,isMobile,hasTouch:isMobile,reducedMotion:"reduce"});
               await page.goto(base,{waitUntil:"networkidle"});
               await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
+              // The selected camera design must be clearly showcased,
+              // with the full real Simulator screen visible at mobile size.
+              const chosen=page.locator("#camera-design");
+              if(!(await chosen.isVisible()))throw Error("Selected Cinematic Minimal section missing");
+              if(!(await chosen.getByRole("heading",{name:/Cinematic\s*Minimal/i}).count()))
+                throw Error("Selected Option 1 title missing");
+              const selectedImage=chosen.locator("img");
+              const bounds=await selectedImage.evaluate(img=>{
+                const r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();
+                return {naturalWidth:img.naturalWidth,width:r.width,height:r.height,
+                  top:r.top,bottom:r.bottom,parentBottom:p.bottom,
+                  viewport:document.documentElement.clientWidth,
+                  left:r.left,right:r.right};
+              });
+              if(bounds.naturalWidth<1000||bounds.width<190||bounds.height<410)
+                throw Error("Selected camera screenshot missing or too small: "+JSON.stringify(bounds));
+              if(bounds.left<0||bounds.right>bounds.viewport+1||bounds.bottom>bounds.parentBottom+1)
+                throw Error("Selected camera screenshot clipped: "+JSON.stringify(bounds));
+              const heroImage=page.locator(".hero-device img");
+              if(!(await heroImage.evaluate(img=>img.complete&&img.naturalWidth>1000)))
+                throw Error("Cinematic Minimal hero screenshot missing");
               const carousel=page.locator("#guide-carousel");
               if(!(await carousel.count()))throw Error("Guide carousel missing");
               const expected=await page.locator("#guide-next").count();

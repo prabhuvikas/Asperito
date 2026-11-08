@@ -132,3 +132,38 @@
   .guide-carousel-stage .guide-glow{width:300px;height:300px;max-width:80vw}
 }
 @media(prefers-reduced-motion:reduce){.guide-progress>div,.guide-arrow{transition:none}}
+
+/* Selected Option 1 showcase: genuine iOS Simulator UI, presented large
+   enough to inspect on phones, not as a tiny tilted marketing mockup. */
+.hero-selection{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border:1px solid rgba(232,190,120,.38);border-radius:100px;background:rgba(232,190,120,.07);font-size:10px;letter-spacing:1.45px;font-weight:700;color:var(--gold)}
+.selection-spark{font-size:14px;line-height:1}
+.selected-camera-section{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,6vw,110px);align-items:center;padding:110px max(28px,calc((100vw - var(--max))/2));background:radial-gradient(ellipse 58% 54% at 79% 50%,rgba(232,190,120,.13),transparent 80%),#121b26;isolation:isolate}
+.selected-camera-copy h2{font-size:clamp(55px,6.8vw,97px);line-height:1.08;margin:25px 0;letter-spacing:-.075em}
+.selected-camera-copy h2 em{font-style:normal;color:var(--gold)}
+.selected-camera-lead{font-size:clamp(15px,1.5vw,18px);line-height:1.82;color:var(--muted);max-width:510px}
+.selected-camera-features{display:grid;gap:20px;margin:36px 0}
+.selected-camera-features>div{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;align-items:start}
+.selected-camera-features strong{font-size:15px;font-weight:700}
+.selected-camera-features p{font-size:13px;color:var(--muted);line-height:1.72;margin:7px 0 0;max-width:425px}
+.feature-step{color:var(--gold);font:700 12px "Manrope",sans-serif;letter-spacing:1px;padding-top:2px}
+.selected-camera-note{color:#9ba9b6;font-size:11px;line-height:1.6;margin:24px 0 0;max-width:380px}
+.selected-camera-image{position:relative;display:flex;justify-content:center;align-items:center;min-width:0}
+.selected-camera-halo{position:absolute;width:min(420px,100%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(232,190,120,.16),transparent 70%);filter:blur(22px);pointer-events:none}
+.selected-camera-device{position:relative;z-index:1;margin:0;width:min(100%,380px)}
+.selected-camera-device img{display:block;width:100%;height:auto;border:6px solid #353d48;border-radius:clamp(30px,4vw,45px);box-shadow:0 35px 75px rgba(0,0,0,.55)}
+.selected-camera-device figcaption{text-align:center;margin-top:16px;font-size:10px;letter-spacing:1.6px;color:var(--gold)}
+@media(max-width:760px){
+  .hero-selection{justify-content:center;text-align:center;max-width:100%;font-size:9px;letter-spacing:.7px}
+  .selected-camera-section{grid-template-columns:1fr;gap:30px;padding:78px 23px 90px}
+  .selected-camera-copy h2{font-size:clamp(51px,12vw,70px)}
+  .selected-camera-features{gap:17px;margin:28px 0}
+  .selected-camera-image{width:100%;overflow:visible}
+  .selected-camera-device{width:min(100%,360px)}
+  .selected-camera-device img{border-radius:37px}
+  .selected-camera-note{margin-bottom:0}
+  /* Earlier mobile clipping hid the lower shutter panel.
+     Show the full real camera rather than a 300px cropped top slice. */
+  .feature-wide .feature-visual{width:min(260px,75%);height:auto;flex:0 0 auto;max-height:none;overflow:visible;margin:12px auto 0}
+  .feature-wide .feature-visual img{height:auto;object-fit:contain;border-radius:30px;max-width:100%}
+}
+@media(max-width:400px){.selected-camera-section{padding-inline:19px}.selected-camera-device{width:min(100%,340px)}.feature-wide .feature-visual{width:min(235px,76%);height:auto;flex-basis:auto}}

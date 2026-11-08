@@ -15,15 +15,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
-  <script defer src="./app.js"></script>
+  <link rel="stylesheet" href="./style.css?v=cinematic-option1-2">
+  <script defer src="./app.js?v=cinematic-option1-2"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-nav" id="site-nav">
     <a class="brand" href="#top" aria-label="Asperito home"><img class="brand-logo" src="./asperito-favicon.png" alt="" width="32" height="32"> ASPERITO</a>
     <nav aria-label="Main navigation" class="desktop-nav">
-      <a href="#guides">Composition</a><a href="#gesture">Gestures</a><a href="#craft">The experience</a><a href="#screens">Screens</a>
+      <a href="#camera-design">Camera design</a><a href="#guides">Composition</a><a href="#gesture">Gestures</a><a href="#screens">Screens</a>
     </nav>
     <a class="nav-cta" href="https://github.com/prabhuvikas/Asperito" target="_blank" rel="noopener noreferrer">Explore project <span aria-hidden="true">↗</span></a>
   </header>
@@ -34,21 +34,43 @@
       <div class="hero-copy">
         <span class="eyebrow"><span class="eyebrow-dot"></span> THE ART OF SEEING</span>
         <h1>Every frame<br>starts with <em>vision.</em></h1>
-        <p>Meet Asperito. A cinematic camera with a quieter interface, eighteen composition guides, and a viewfinder that lets the scene take center stage.</p>
+        <p>Introducing Cinematic Minimal: a viewfinder-first camera interface, eighteen composition guides, and controls that stay out of the shot.</p><div class="hero-selection"><span class="selection-spark" aria-hidden="true">✦</span> OPTION 1 / CINEMATIC MINIMAL · SELECTED DESIGN</div>
         <div class="hero-actions">
           <a href="#guides" class="button button-gold">Explore the guides <span aria-hidden="true">↓</span></a>
-          <a href="#screens" class="button button-outline">See the app</a>
+          <a href="#camera-design" class="button button-outline">See the selected design</a>
         </div>
       </div>
       <div class="hero-device" aria-label="Actual Asperito iPhone Simulator screenshot">
         <div class="hero-aura" aria-hidden="true"></div>
         <div class="phone phone-hero" data-parallax="hero">
           <div class="phone-camera" aria-hidden="true"></div>
-          <img src="./screenshots/overlay-thirds.png" alt="Asperito camera interface with Rule of Thirds over a simulated landscape" width="1206" height="2622" fetchpriority="high">
+          <img src="./screenshots/overlay-thirds.png?v=cinematic-minimal-20261108" alt="Asperito camera interface with Rule of Thirds over a simulated landscape" width="1206" height="2622" fetchpriority="high">
         </div>
         <span class="device-side-note">REAL APP UI <span class="note-line"></span> SIMULATOR PREVIEW</span>
       </div>
       <a class="scroll-prompt" href="#guides"><span>SCROLL TO DISCOVER</span><span class="scroll-arrow" aria-hidden="true">↓</span></a>
+    </section>
+
+    <section class="selected-camera-section" id="camera-design" aria-labelledby="camera-design-heading">
+      <div class="selected-camera-copy observe">
+        <span class="eyebrow">SELECTED DESIGN / OPTION 01</span>
+        <h2 id="camera-design-heading">Cinematic<br><em>Minimal.</em></h2>
+        <p class="selected-camera-lead">The scene comes first. The controls don't compete for attention. This is the camera interface you selected, shown directly from the running iPhone Simulator.</p>
+        <div class="selected-camera-features">
+          <div><span class="feature-step">01</span><div><strong>Viewfinder first</strong><p>More of your scene, with a quiet midnight frame and subtle composition lines.</p></div></div>
+          <div><span class="feature-step">02</span><div><strong>Only the essentials</strong><p>One compact guide picker, a clean shutter, and expandable zoom and exposure.</p></div></div>
+          <div><span class="feature-step">03</span><div><strong>Learn without leaving camera</strong><p>A small two-finger gesture coach with Replay and Try it, right in the viewfinder.</p></div></div>
+        </div>
+        <a class="button button-outline" href="#screens">Explore real app screenshots <span aria-hidden="true">↓</span></a>
+        <p class="selected-camera-note">Actual iOS Simulator screen · deterministic preview scene in place of physical camera footage</p>
+      </div>
+      <div class="selected-camera-image observe">
+        <div class="selected-camera-halo" aria-hidden="true"></div>
+        <figure class="selected-camera-device">
+          <img src="./screenshots/camera.png?v=cinematic-minimal-20261108" width="1206" height="2622" loading="eager" alt="Selected Option 1 Cinematic Minimal Asperito interface showing the large viewfinder, compact Rule of Thirds selector, shutter and slim controls">
+          <figcaption>ASPERITO / SELECTED CAMERA INTERFACE</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="signature-section" aria-labelledby="signature-heading">
@@ -135,8 +157,8 @@
       </div>
       <div class="feature-grid">
         <article class="feature-card feature-wide observe">
-          <div class="feature-words"><span class="feature-num">01 / FRAME</span><h3>Focus on what matters.</h3><p>A distraction-free viewfinder. A thoughtful set of tools. Your eye does the rest.</p></div>
-          <div class="feature-visual"><img loading="lazy" src="./screenshots/camera.png" width="1206" height="2622" alt="Camera screen showing composition guides and capture controls"></div>
+          <div class="feature-words"><span class="feature-num">01 / FRAME · CINEMATIC MINIMAL</span><h3>Focus on what matters.</h3><p>A distraction-free viewfinder. A thoughtful set of tools. Your eye does the rest.</p></div>
+          <div class="feature-visual"><img loading="lazy" src="./screenshots/camera.png?v=cinematic-minimal-20261108" width="1206" height="2622" alt="Camera screen showing composition guides and capture controls"></div>
         </article>
         <article class="feature-card observe">
           <div class="feature-words"><span class="feature-num">02 / LEARN</span><h3>Learn by looking.</h3><p>Simple, offline lessons turn every guide into a new creative instinct.</p></div>
@@ -161,10 +183,10 @@
     </section>
 
     <section id="screens" class="screens-section">
-      <div class="screens-heading observe"><div><span class="eyebrow">04 / THE APP</span><h2>Every screen.<br>Considered.</h2></div><p>A look inside the real Asperito iPhone app. Swipe to explore.</p></div>
+      <div class="screens-heading observe"><div><span class="eyebrow">04 / THE APP · OPTION 1</span><h2>Every screen.<br>Considered.</h2></div><p>Actual iPhone Simulator captures of the selected Cinematic Minimal app. Swipe to explore the camera, guides, and lessons.</p></div>
       <div class="screen-carousel" id="screen-carousel" aria-label="Asperito screenshot gallery" tabindex="0">
         <figure><img loading="lazy" src="./screenshots/onboarding.png" width="1206" height="2622" alt="Asperito onboarding screen"><figcaption>Welcome</figcaption></figure>
-        <figure><img loading="lazy" src="./screenshots/camera.png" width="1206" height="2622" alt="Asperito camera view"><figcaption>The camera</figcaption></figure>
+        <figure><img loading="lazy" src="./screenshots/camera.png?v=cinematic-minimal-20261108" width="1206" height="2622" alt="Selected Cinematic Minimal camera view"><figcaption>Cinematic Minimal · Camera</figcaption></figure>
         <figure><img loading="lazy" src="./screenshots/picker.png" width="1206" height="2622" alt="Asperito composition guide picker"><figcaption>Explore guides</figcaption></figure>
         <figure><img loading="lazy" src="./screenshots/tutorial.png" width="1206" height="2622" alt="Asperito photography lesson"><figcaption>Learn by doing</figcaption></figure>
         <figure><img loading="lazy" src="./screenshots/settings.png" width="1206" height="2622" alt="Asperito settings"><figcaption>Make it yours</figcaption></figure>
