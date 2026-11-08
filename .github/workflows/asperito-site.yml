@@ -80,6 +80,14 @@ jobs:
           test "$(stat -c%s docs/media/gesture-in-camera.mp4)" -gt 100000
           file docs/media/gesture-in-camera.mp4
 
+      - name: Build clean shared Asperito logo assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages pillow numpy
+          python3 scripts/clean_asperito_logo.py
+          file docs/asperito-logo.png docs/asperito-favicon.png FrameGuide/Assets.xcassets/AppIcon.appiconset/icon.png
+
       - name: Commit actual screenshots to GitHub documentation
         env:
           GH_TOKEN: ${{ github.token }}
@@ -87,7 +95,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/ docs/director.jpg docs/media/gesture-in-camera.mp4
+          git add docs/screenshots/ docs/director.jpg docs/media/gesture-in-camera.mp4 docs/asperito-logo.png docs/asperito-favicon.png FrameGuide/Assets.xcassets/AppIcon.appiconset/icon.png FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg
           if git diff --cached --quiet; then
             echo "Screenshot files already current."
           else
@@ -105,6 +113,8 @@ jobs:
           from html.parser import HTMLParser
           root=Path("docs")
           assert len(list((root/"screenshots").glob("*.png")))==23, "Expected 23 screenshot PNGs"
+          assert (root/"asperito-logo.png").stat().st_size>100000, "Clean full-size logo missing"
+          assert (root/"asperito-favicon.png").stat().st_size>1000, "Favicon missing"
           movie=root/"media/gesture-in-camera.mp4"
           assert movie.exists() and movie.stat().st_size>100000, "Missing real in-app gesture recording"
           class Page(HTMLParser):

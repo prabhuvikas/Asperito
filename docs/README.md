@@ -7,7 +7,7 @@ This directory is a fully static, mobile-first GitHub Pages experience for **Asp
 - `app.js`: interactive composition-carousel navigation (swipe, arrows, keyboard), screenshot carousel navigation, accessible state announcements and scroll reveal.
 - `screenshots/`: original 23 PNG captures from iPhone Simulator, copied automatically by GitHub Actions.
 - The interactive composition selector and gallery feature 18 guides, including the six new manually adjustable composition modes.
-- `favicon.svg`: minimal framing symbol.
+- `asperito-logo.png`, `asperito-favicon.png`: cleaned director logo shared with iOS onboarding and app icon; generated reproducibly from `branding/asperito-original.jpg`.
 
 ## Live URL
 
@@ -44,3 +44,5 @@ python3 -m http.server 8000 --directory docs
 ```
 
 Open http://localhost:8000/ in a browser. The page uses standard HTML/CSS/JavaScript without a build step or external JS dependencies. Google Fonts load if online, with system font fallbacks offline.
+
+The live composition section is a keyboard-accessible, swipeable **18-guide carousel** with previous/next arrows, progress feedback, and a native mobile swipe gesture. It is tested in desktop and mobile browser automation.
