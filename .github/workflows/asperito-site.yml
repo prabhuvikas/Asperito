@@ -115,15 +115,24 @@ jobs:
               await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
               const expected=await page.locator(".guide-option").count();
               if(expected!==18)throw Error("Expected 18 interactive composition guides; found "+expected);
-              await page.locator('[data-guide="sCurve"]').click();
-              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("sCurve"),{timeout:5000});
-              await page.locator('[data-guide="goldenTriangle"]').click();
-              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("goldenTriangle"),{timeout:5000});
-              await page.locator('[data-guide="goldenSpiral"]').click();
-              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("goldenSpiral"),{timeout:5000});
-              const src=await page.locator("#guide-image").getAttribute("src");
-              if(!src.includes("goldenSpiral"))throw Error("Guide button did not change image");
+              const ids=["thirds","goldenGrid","goldenSpiral","center","diagonal",
+                "square","horizon","eyeLine","safeArea","perspective","cinematic",
+                "custom","leadingLines","reflection","goldenTriangle","frameWithinFrame",
+                "negativeSpace","sCurve"];
+              for (const id of ids) {
+                const button=page.locator('[data-guide="'+id+'"]');
+                await button.click();
+                await page.waitForFunction(value =>
+                  document.querySelector("#guide-image")?.getAttribute("src")?.endsWith("overlay-"+value+".png"), id, {timeout:5000});
+                if (await button.getAttribute("aria-pressed")!=="true") throw Error("Guide state: "+id);
+                if (!(await page.locator("#guide-image").evaluate(img => img.complete && img.naturalWidth>0))) {
+                  throw Error("Missing composition screenshot: "+id);
+                }
+              }
               await page.locator('[data-guide="thirds"]').click();
+              const overflow=await page.evaluate(() =>
+                document.documentElement.scrollWidth > window.innerWidth + 8);
+              if(overflow)throw Error("Horizontal overflow on "+name);
               await page.evaluate(()=>window.scrollTo(0,0));
               await page.screenshot({path:"site-preview/"+name+".png",fullPage:true,animations:"disabled"});
               await page.close();
