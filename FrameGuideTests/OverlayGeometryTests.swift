@@ -234,3 +234,37 @@ final class CaptureAspectTests: XCTestCase {
         XCTAssertEqual(CaptureAspect.sixteenNine.portraitRatio, 9.0 / 16, accuracy: 0.0001)
     }
 }
+
+import Photos
+import UIKit
+
+final class CameraProcessingTests: XCTestCase {
+    private func sampleJPEG() -> Data {
+        let image = UIGraphicsImageRenderer(size:CGSize(width:400,height:300)).image { ctx in
+            UIColor.red.setFill()
+            ctx.cgContext.fill(CGRect(x:0,y:0,width:400,height:300))
+        }
+        return image.jpegData(compressionQuality:0.85)!
+    }
+    func testSavePermissionStatuses() {
+        XCTAssertTrue(CameraManager.maySavePhotos(.authorized))
+        XCTAssertTrue(CameraManager.maySavePhotos(.limited))
+        XCTAssertFalse(CameraManager.maySavePhotos(.denied))
+        XCTAssertFalse(CameraManager.maySavePhotos(.restricted))
+        XCTAssertFalse(CameraManager.maySavePhotos(.notDetermined))
+    }
+    func testPhotoCroppingAndInvalidJPEG() {
+        let jpeg=sampleJPEG()
+        let unchanged=CameraManager.cropJPEG(jpeg,to:.fourThree)
+        XCTAssertEqual(unchanged?.0,jpeg)
+        for aspect in [CaptureAspect.square,.sixteenNine] {
+            guard let result=CameraManager.cropJPEG(jpeg,to:aspect) else {
+                return XCTFail("JPEG processing failed: \(aspect.rawValue)")
+            }
+            XCTAssertEqual(result.1.size.width/result.1.size.height,
+                           1/aspect.outputRatio,accuracy:0.015)
+            XCTAssertGreaterThan(result.0.count,1000)
+        }
+        XCTAssertNil(CameraManager.cropJPEG(Data(),to:.square))
+    }
+}

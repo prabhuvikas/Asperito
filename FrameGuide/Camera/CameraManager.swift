@@ -193,7 +193,11 @@ final class CameraManager: NSObject, ObservableObject {
         queue.async { [weak self] in self?.captureInFlight = false }
     }
 
-    private static func cropJPEG(_ data: Data, to aspect: CaptureAspect) -> (Data, UIImage)? {
+    static func maySavePhotos(_ status: PHAuthorizationStatus) -> Bool {
+        status == .authorized || status == .limited
+    }
+
+    static func cropJPEG(_ data: Data, to aspect: CaptureAspect) -> (Data, UIImage)? {
         guard let input = UIImage(data: data) else { return nil }
         // Rotate pixels into display orientation before cropping; 4:3 uses original bytes.
         if aspect == .fourThree { return (data, input) }
@@ -243,7 +247,7 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
                 return
             }
             PHPhotoLibrary.requestAuthorization(for:.addOnly) { status in
-                guard status == .authorized || status == .limited else {
+                guard Self.maySavePhotos(status) else {
                     self.finishCapture()
                     DispatchQueue.main.async { self.isSaving = false; self.errorMessage = "Allow Photos access in Settings to save pictures." }
                     return

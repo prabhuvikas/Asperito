@@ -4,6 +4,20 @@
 	classes = {};
 	objectVersion = 56;
 	objects = {
+FA0000000000000000000001 /* FrameGuideUITests.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameGuideUITests.swift; sourceTree = "<group>"; };
+FA0000000000000000000002 /* UI tests in Sources */ = { isa = PBXBuildFile; fileRef = FA0000000000000000000001 /* FrameGuideUITests.swift */; };
+FA0000000000000000000003 /* FrameGuideUITests.xctest */ = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FrameGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+FA0000000000000000000004 /* FrameGuideUITests */ = { isa = PBXGroup; children = ( FA0000000000000000000001 /* FrameGuideUITests.swift */, ); path = FrameGuideUITests; sourceTree = "<group>"; };
+FA0000000000000000000005 /* UI Sources */ = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( FA0000000000000000000002 /* UI tests in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000006 /* UI Frameworks */ = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000007 /* UI Resources */ = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+FA0000000000000000000008 /* UI Debug */ = { isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = FrameGuide; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+FA0000000000000000000009 /* UI Release */ = { isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.frameguide.ios.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = FrameGuide; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
+FA000000000000000000000A /* UI config list */ = { isa = XCConfigurationList; buildConfigurations = (FA0000000000000000000008 /* UI Debug */,FA0000000000000000000009 /* UI Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+FA000000000000000000000B /* FrameGuideUITests */ = { isa = PBXNativeTarget; buildConfigurationList = FA000000000000000000000A /* UI config list */; buildPhases = (FA0000000000000000000005 /* UI Sources */,FA0000000000000000000006 /* UI Frameworks */,FA0000000000000000000007 /* UI Resources */,); buildRules = (); dependencies = (FA000000000000000000000C /* FrameGuide */,); name = FrameGuideUITests; productName = FrameGuideUITests; productReference = FA0000000000000000000003 /* FrameGuideUITests.xctest */; productType = com.apple.product-type.bundle.ui-testing; };
+FA000000000000000000000C /* FrameGuide dependency */ = { isa = PBXTargetDependency; target = A55514FE41BE9F43DDDD0C34 /* FrameGuide */; targetProxy = FA000000000000000000000D /* App proxy */; };
+FA000000000000000000000D /* App proxy */ = { isa = PBXContainerItemProxy; containerPortal = E9708CC622B627DA0F185E54 /* Project object */; proxyType = 1; remoteGlobalIDString = A55514FE41BE9F43DDDD0C34; remoteInfo = FrameGuide; };
+
         91B000000000000000000001 /* AsperitoBrand.swift */ = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsperitoBrand.swift; sourceTree = "<group>"; };
         91B000000000000000000002 /* AsperitoBrand.swift in Sources */ = { isa = PBXBuildFile; fileRef = 91B000000000000000000001 /* AsperitoBrand.swift */; };
         91B000000000000000000003 /* LaunchScreen.storyboard */ = { isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -292,6 +306,7 @@
 			children = (
 				92B501D53D4E1E28CEAE7377 /* FrameGuide.app */,
 				DE8B527170E67651B18402E7 /* FrameGuideTests.xctest */,
+                FA0000000000000000000003 /* FrameGuideUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -301,6 +316,7 @@
 			children = (
 				312AEDB2B2706B27107125F2 /* FrameGuide */,
 				9F07B8E0140341044D9B748E /* FrameGuideTests */,
+                FA0000000000000000000004 /* FrameGuideUITests */,
 				00C45FD35CB0F9C5F764F070 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -589,6 +605,7 @@
 			targets = (
 				A55514FE41BE9F43DDDD0C34 /* FrameGuide */,
 				78002BFC6000B98D996A164B /* FrameGuideTests */,
+                FA000000000000000000000B /* FrameGuideUITests */,
 			);
 		};
 	};
