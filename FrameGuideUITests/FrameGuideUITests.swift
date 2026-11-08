@@ -53,25 +53,25 @@ final class FrameGuideUITests: XCTestCase {
     }
     func testSettingsPrivacyAndGuidePersistence() {
         let app = launch()
+        let initiallyVisible = app.buttons["Hide overlay"].exists
         app.buttons["Settings"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 10))
         let toggle = app.switches["Show guide"]
-        XCTAssertTrue(toggle.exists)
-        let initial = toggle.value as? String
-        let expected = initial == "1" ? "0" : "1"
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         toggle.tap()
-        let changed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "value == %@",expected), object:toggle)
-        XCTAssertEqual(XCTWaiter.wait(for:[changed],timeout:8),.completed,
-                       "Show guide switch did not change after tapping")
+        // Check the camera's behavior rather than UIKit accessibility's
+        // switch "value", which is unreliable in some Simulator runtimes.
         app.buttons["Privacy policy"].tap()
         XCTAssertTrue(app.staticTexts["Asperito Privacy"].waitForExistence(timeout: 8))
         app.buttons["Done"].tap()
         app.buttons["Done"].tap()
+        let expectedButton = initiallyVisible ? "Show overlay" : "Hide overlay"
+        XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 8),
+                      "Changing the Settings toggle must update the camera overlay")
         app.terminate()
         app.launch()
-        app.buttons["Settings"].tap()
-        XCTAssertNotEqual(app.switches["Show guide"].value as? String,initial)
+        XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 10),
+                      "Guide visibility must persist across app launches")
     }
     func testOfflineTutorialRenders() {
         let app = launch("tutorial")
