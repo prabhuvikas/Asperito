@@ -27,6 +27,7 @@ struct CameraView: View {
     @AppStorage("overlay.guideScale") private var guideScale = 0.7
     @AppStorage("overlay.reflectionHorizontal") private var reflectionHorizontal = false
     @AppStorage("overlay.curveBend") private var curveBend = 0.5
+    @AppStorage("overlay.gestureRotations") private var gestureRotationsJSON = "{}"
     @AppStorage("camera.timer") private var timerSeconds = 0
     @AppStorage("onboarding.complete") private var onboardingComplete = false
 
@@ -38,6 +39,9 @@ struct CameraView: View {
     @State private var showingExposure = false
     @State private var secondsRemaining = 0
     @State private var countdownTask: Task<Void, Never>?
+    @State private var rotationGestureDelta = 0.0
+    @State private var rotatingGuide = false
+    @State private var lastHapticQuarter: Int?
 
     private var selectedKind: OverlayKind {
         #if DEBUG
@@ -48,6 +52,44 @@ struct CameraView: View {
     }
     private var selectedColor: GuideColor { GuideColor(rawValue:colorRaw) ?? .white }
     private var selectedAspect: CaptureAspect { CaptureAspect(rawValue:aspectRaw) ?? .fourThree }
+    private func savedRotation(for kind: OverlayKind) -> Double {
+        GuideRotationStore.read(gestureRotationsJSON)[kind.rawValue] ?? 0
+    }
+    private var currentRotation: Double {
+        savedRotation(for:selectedKind) + (rotatingGuide ? rotationGestureDelta : 0)
+    }
+    private func handleRotation(_ degrees: Double, state: UIGestureRecognizer.State) {
+        guard selectedKind.supportsGestureRotation, isGuideVisible,
+              !camera.permissionDenied else { return }
+        switch state {
+        case .began, .changed:
+            rotatingGuide = true
+            rotationGestureDelta = degrees
+            let total = currentRotation
+            let quarter = Int((total/90).rounded())
+            if abs(total - Double(quarter)*90) < 2.0 {
+                if lastHapticQuarter != quarter {
+                    UIImpactFeedbackGenerator(style:.light).impactOccurred()
+                    lastHapticQuarter = quarter
+                }
+            } else {
+                lastHapticQuarter = nil
+            }
+        case .ended:
+            var allAngles = GuideRotationStore.read(gestureRotationsJSON)
+            allAngles[selectedKind.rawValue] = GuideRotationStore.normalized(
+                savedRotation(for:selectedKind) + degrees)
+            gestureRotationsJSON = GuideRotationStore.write(allAngles)
+            rotationGestureDelta = 0
+            rotatingGuide = false
+            lastHapticQuarter = nil
+        case .cancelled, .failed:
+            rotationGestureDelta = 0
+            rotatingGuide = false
+            lastHapticQuarter = nil
+        default: break
+        }
+    }
     private var guideSettings: GuideSettings {
         GuideSettings(customRows:rows,customColumns:columns,eyeLinePosition:eyeLine,
                       perspectivePoint:CGPoint(x:perspectiveX,y:perspectiveY),
@@ -73,14 +115,35 @@ struct CameraView: View {
                             if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--asperito-screen=") }) {
                                 ScreenshotScenePreview()
                             } else {
-                                CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
+                                CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) },
+                                              onRotation:{ handleRotation($0,state:$1) })
                             }
                             #else
-                            CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) })
+                            CameraPreview(session:camera.session,onFocus:{ camera.focus(at:$0) },
+                                              onRotation:{ handleRotation($0,state:$1) })
                             #endif
                         }
                         if isGuideVisible {
-                            OverlayCanvas(kind:selectedKind,color:selectedColor.color,opacity:opacity,settings:guideSettings,levelRoll:motion.roll)
+                            OverlayCanvas(kind:selectedKind,color:selectedColor.color,opacity:opacity,
+                                          settings:guideSettings,levelRoll:motion.roll,
+                                          gestureRotationDegrees:currentRotation)
+                        }
+                        if rotatingGuide && selectedKind.supportsGestureRotation {
+                            VStack {
+                                HStack {
+                                    Image(systemName:"rotate.3d")
+                                    Text("\(Int(currentRotation.rounded()))°")
+                                        .monospacedDigit()
+                                }
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(AsperitoPalette.gold)
+                                .padding(.horizontal,14).padding(.vertical,8)
+                                .background(AsperitoPalette.midnight.opacity(0.86),
+                                            in:Capsule())
+                                .padding(.top,12)
+                                Spacer()
+                            }
+                            .allowsHitTesting(false)
                         }
                         if secondsRemaining > 0 {
                             Color.black.opacity(0.18)
@@ -178,7 +241,11 @@ struct CameraView: View {
             #endif
             refreshMotion()
         }
-        .onDisappear { camera.stop(); motion.stop(); countdownTask?.cancel() }
+        .onDisappear {
+            camera.stop(); motion.stop(); countdownTask?.cancel()
+            rotationGestureDelta = 0
+            rotatingGuide = false
+        }
         .onChange(of:scenePhase) { _,new in
             if new == .active {
                 #if DEBUG
@@ -192,7 +259,12 @@ struct CameraView: View {
             }
             else { camera.stop(); motion.stop(); countdownTask?.cancel(); secondsRemaining = 0 }
         }
-        .onChange(of:overlayRaw) { _,_ in refreshMotion() }
+        .onChange(of:overlayRaw) { _,_ in
+            rotationGestureDelta = 0
+            rotatingGuide = false
+            lastHapticQuarter = nil
+            refreshMotion()
+        }
     }
 
     private var topBar: some View {

@@ -6,6 +6,7 @@ struct OverlayCanvas: View {
     var opacity: Double = 0.8
     var settings: GuideSettings = .init()
     var levelRoll: Double = 0
+    var gestureRotationDegrees: Double = 0
 
     var body: some View {
         Canvas(rendersAsynchronously: true) { context, size in
@@ -33,8 +34,11 @@ struct OverlayCanvas: View {
                 context.stroke(fixed,with:.color(.white),lineWidth:2)
                 return
             }
+            let rotatedGuides = OverlayGeometry.rotated(
+                OverlayGeometry.lines(for:kind,in:bounds,settings:settings),
+                in:bounds,degrees:gestureRotationDegrees)
             if kind == .goldenSpiral {
-                for guide in OverlayGeometry.lines(for: kind, in: bounds, settings: settings) {
+                for guide in rotatedGuides {
                     let ink = guide.accent ? AsperitoPalette.gold : Color.white
                     let alpha = guide.accent ? opacity : opacity * (guide.dashed ? 0.25 : 0.45)
                     let lineWidth: CGFloat = guide.accent ? 2.8 : 0.85
@@ -47,7 +51,7 @@ struct OverlayCanvas: View {
                 return
             }
             if [.leadingLines, .reflection, .goldenTriangle, .frameWithinFrame, .negativeSpace, .sCurve].contains(kind) {
-                for guide in OverlayGeometry.lines(for:kind,in:bounds,settings:settings) {
+                for guide in rotatedGuides {
                     let ink = guide.accent ? AsperitoPalette.gold : Color.white
                     let strength = guide.dashed ? 0.40 : guide.accent ? 1.0 : 0.65
                     let line = StrokeStyle(lineWidth:guide.accent ? 2.3 : 1.0,
@@ -57,7 +61,7 @@ struct OverlayCanvas: View {
                 }
                 return
             }
-            for guide in OverlayGeometry.lines(for:kind,in:bounds,settings:settings) {
+            for guide in rotatedGuides {
                 let stroke = StrokeStyle(lineWidth:guide.accent ? 1.8 : 1, dash:guide.dashed ? [7,5] : [])
                 context.stroke(guide.path, with:.color(color.opacity(opacity)), style:stroke)
             }

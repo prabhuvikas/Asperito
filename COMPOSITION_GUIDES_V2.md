@@ -16,3 +16,17 @@ Controls live in the existing **Guides** picker, and preferences persist through
 All 18 guides are included in automated portrait/landscape geometry tests, and all six new guides have dedicated iPhone Simulator capture cases. The screenshot workflow outputs **23 PNGs**: 18 guide views plus onboarding, main camera, picker, tutorial, and settings.
 
 **Simulator disclosure:** The camera previews use synthetic landscape imagery for repeatable automated inspection; they are genuine running-app UI captures, not photos captured with physical camera hardware. Test sensor-based features and Photos saving on a real iPhone before distribution.
+
+## Gesture rotation (iOS camera)
+
+Creative guides now support **two-finger rotation** on the real live camera preview.
+One-finger tap-to-focus remains untouched, and the overlay never modifies a captured photo.
+
+- Free rotation is available for Golden Spiral, Diagonal Guides, Perspective Lines, Leading Lines, Symmetry & Reflection, Golden Triangle, Frame Within Frame, Negative Space and S-Curve.
+- Device-native `UIRotationGestureRecognizer` handles two touches on the existing `AVCaptureVideoPreviewLayer` wrapper. Single taps still use `UITapGestureRecognizer`.
+- A temporary angle chip appears during rotation; subtle haptic ticks indicate right-angle alignment.
+- Each composition's fine angle is saved separately in the on-device `overlay.gestureRotations` preference, and is restored when reselected.
+- Fixed grids, horizon sensor and aspect-ratio masks do not rotate independently of the photo frame.
+- SwiftUI Canvas applies the rotation to vector paths only. The preview, focus and saved photographs are not transformed.
+
+Gesture behavior needs final testing with two fingers on a physical iPhone; GitHub's iPhone Simulator capture cannot verify multitouch feel.

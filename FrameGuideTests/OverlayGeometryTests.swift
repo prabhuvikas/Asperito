@@ -8,7 +8,7 @@ final class OverlayGeometryTests: XCTestCase {
 
     func testExactlyEighteenDistinctGuides() {
         XCTAssertEqual(OverlayKind.allCases.count, 18)
-        XCTAssertEqual(Set(OverlayKind.allCases.map(\.rawValue)).count, 12)
+        XCTAssertEqual(Set(OverlayKind.allCases.map(\.rawValue)).count, 18)
     }
 
     func testAllEighteenGuidesRenderAtBothOrientations() {
@@ -56,7 +56,60 @@ final class OverlayGeometryTests: XCTestCase {
         }
         let a=OverlayGeometry.lines(for:.sCurve,in:portrait,settings:GuideSettings(curveBend:0.2))[0].path
         let b=OverlayGeometry.lines(for:.sCurve,in:portrait,settings:GuideSettings(curveBend:0.8))[0].path
-        XCTAssertNotEqual(a.boundingRect,b.boundingRect,"Bend must change the S-curve")
+        // The curve's endpoints are unchanged, so its bounding box may also
+        // remain unchanged. Check the actual Bézier control points instead.
+        func points(_ path: Path) -> [CGPoint] {
+            var result: [CGPoint] = []
+            path.forEach { element in
+                switch element {
+                case let .move(to: p), let .line(to: p): result.append(p)
+                case let .quadCurve(to: p, control: c): result.append(contentsOf:[p,c])
+                case let .curve(to: p, control1: a, control2: b): result.append(contentsOf:[p,a,b])
+                case .closeSubpath: break
+                }
+            }
+            return result
+        }
+        XCTAssertNotEqual(points(a),points(b),"Bend must change the S-curve")
+    }
+
+    func testGestureRotationStoreIsPerGuideAndHandlesCorruptData() {
+        let input: [String: Double] = ["goldenSpiral": 48.5, "sCurve": -76]
+        let output = GuideRotationStore.read(GuideRotationStore.write(input))
+        XCTAssertEqual(output["goldenSpiral"],48.5)
+        XCTAssertEqual(output["sCurve"],-76)
+        XCTAssertEqual(GuideRotationStore.read("not json").count,0)
+        XCTAssertEqual(GuideRotationStore.normalized(450),90)
+        XCTAssertEqual(GuideRotationStore.normalized(-450),-90)
+        XCTAssertEqual(GuideRotationStore.normalized(.infinity),0)
+    }
+
+    func testOnlyCreativeGuidesRotateByGesture() {
+        for kind in [OverlayKind.goldenSpiral,.diagonal,.perspective,
+                     .leadingLines,.reflection,.goldenTriangle,
+                     .frameWithinFrame,.negativeSpace,.sCurve] {
+            XCTAssertTrue(kind.supportsGestureRotation,kind.title)
+        }
+        for kind in [OverlayKind.thirds,.goldenGrid,.square,.custom,
+                     .horizon,.eyeLine,.safeArea,.cinematic,.center] {
+            XCTAssertFalse(kind.supportsGestureRotation,kind.title)
+        }
+    }
+
+    func testFineRotationTransformsPathsAboutViewfinderCenter() {
+        let bounds = CGRect(x:10,y:20,width:200,height:400)
+        let guide = GuideStroke(path:Path { p in
+            p.move(to: CGPoint(x:110,y:120))
+            p.addLine(to: CGPoint(x:110,y:180))
+        },accent:true)
+        let rotated = OverlayGeometry.rotated([guide],in:bounds,degrees:90)
+        let box = rotated[0].path.boundingRect
+        XCTAssertEqual(box.minX,150,accuracy:0.001)
+        XCTAssertEqual(box.maxX,210,accuracy:0.001)
+        XCTAssertEqual(box.midY,220,accuracy:0.001)
+        XCTAssertTrue(rotated[0].accent)
+        XCTAssertEqual(OverlayGeometry.rotated([guide],in:bounds,degrees:0)[0].path.boundingRect,
+                       guide.path.boundingRect)
     }
 
     func testThirdsAndGoldenRatioHaveFourLines() {

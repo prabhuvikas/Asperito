@@ -297,6 +297,22 @@ enum OverlayGeometry {
         }
     }
 
+
+    /// Rotate already-generated guide paths about the viewfinder center,
+    /// without affecting the camera preview or the captured photo.
+    static func rotated(_ guides: [GuideStroke], in bounds: CGRect,
+                        degrees: Double) -> [GuideStroke] {
+        guard bounds.width > 0, bounds.height > 0, degrees.isFinite,
+              degrees != 0 else { return guides }
+        var transform = CGAffineTransform(translationX: bounds.midX, y: bounds.midY)
+        transform = transform.rotated(by: CGFloat(degrees) * .pi / 180)
+        transform = transform.translatedBy(x: -bounds.midX, y: -bounds.midY)
+        return guides.map {
+            GuideStroke(path: $0.path.applying(transform),
+                        accent: $0.accent, dashed: $0.dashed)
+        }
+    }
+
     // Aspect ratios are specified width/height in the *displayed* orientation.
     static func framingRect(inside bounds: CGRect, targetAspect: CGFloat) -> CGRect {
         guard bounds.width > 0, bounds.height > 0, targetAspect > 0 else { return bounds }

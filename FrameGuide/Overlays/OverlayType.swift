@@ -6,6 +6,19 @@ enum OverlayKind: String, CaseIterable, Identifiable, Codable {
     case leadingLines, reflection, goldenTriangle, frameWithinFrame, negativeSpace, sCurve
 
     var id: String { rawValue }
+
+    // Grids, horizons and aspect-ratio masks stay aligned to the photo frame.
+    // Free rotation is offered only for guides where it is photographically useful.
+    var supportsGestureRotation: Bool {
+        switch self {
+        case .goldenSpiral, .diagonal, .perspective,
+             .leadingLines, .reflection, .goldenTriangle,
+             .frameWithinFrame, .negativeSpace, .sCurve:
+            return true
+        default:
+            return false
+        }
+    }
     var title: String {
         switch self {
         case .thirds: "Rule of Thirds"
@@ -94,4 +107,30 @@ struct GuideSettings {
     var guideScale: CGFloat = 0.7
     var reflectionHorizontal: Bool = false
     var curveBend: CGFloat = 0.5
+}
+
+
+/// Persist a separate free-rotation angle for every eligible composition.
+enum GuideRotationStore {
+    static func read(_ json: String) -> [String: Double] {
+        guard let data = json.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode([String: Double].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }
+
+    static func write(_ angles: [String: Double]) -> String {
+        guard let data = try? JSONEncoder().encode(angles),
+              let string = String(data: data, encoding: .utf8) else { return "{}" }
+        return string
+    }
+
+    static func normalized(_ degrees: Double) -> Double {
+        guard degrees.isFinite else { return 0 }
+        let wrapped = degrees.truncatingRemainder(dividingBy: 360)
+        if wrapped > 180 { return wrapped - 360 }
+        if wrapped <= -180 { return wrapped + 360 }
+        return wrapped
+    }
 }
