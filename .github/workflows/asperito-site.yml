@@ -112,6 +112,7 @@ jobs:
               const expected=await page.locator(".guide-option").count();
               if(expected!==12)throw Error("Expected 12 interactive composition guides; found "+expected);
               await page.locator('[data-guide="goldenSpiral"]').click();
+              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("goldenSpiral"),{timeout:5000});
               const src=await page.locator("#guide-image").getAttribute("src");
               if(!src.includes("goldenSpiral"))throw Error("Guide button did not change image");
               await page.locator('[data-guide="thirds"]').click();
