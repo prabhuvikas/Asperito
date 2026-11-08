@@ -6,7 +6,7 @@
 
 **A photography composition camera for iPhone.**
 
-12 live guides · Offline lessons · Your images, without grid lines
+18 live guides · Offline lessons · Your images, without grid lines
 
 [Explore the immersive website](https://prabhuvikas.github.io/Asperito/) · [Browse screenshots](docs/index.html#screens) · [Read the setup guide](#development)
 
@@ -20,10 +20,10 @@
 
 | Compose | Discover | Learn |
 |:--:|:--:|:--:|
-| ![Golden spiral camera guide](docs/screenshots/overlay-goldenSpiral.png) | ![12 guide picker](docs/screenshots/picker.png) | ![Photography lesson](docs/screenshots/tutorial.png) |
-| Frame with live guides | Explore 12 perspectives | Learn techniques offline |
+| ![Golden spiral camera guide](docs/screenshots/overlay-goldenSpiral.png) | ![18 guide picker](docs/screenshots/picker.png) | ![Photography lesson](docs/screenshots/tutorial.png) |
+| Frame with live guides | Explore 18 perspectives | Learn techniques offline |
 
-## 12 composition guides
+## 18 composition guides
 
 | | | |
 |:--:|:--:|:--:|
@@ -35,6 +35,10 @@
 | Horizon Level | Portrait Eye Line | Social Safe Area |
 | ![Perspective Lines](docs/screenshots/overlay-perspective.png) | ![Cinematic Frame](docs/screenshots/overlay-cinematic.png) | ![Custom Grid](docs/screenshots/overlay-custom.png) |
 | Perspective Lines | Cinematic Frame | Custom Grid |
+| ![Leading Lines](docs/screenshots/overlay-leadingLines.png) | ![Symmetry and Reflection](docs/screenshots/overlay-reflection.png) | ![Golden Triangle](docs/screenshots/overlay-goldenTriangle.png) |
+| Leading Lines | Symmetry & Reflection | Golden Triangle |
+| ![Frame Within Frame](docs/screenshots/overlay-frameWithinFrame.png) | ![Negative Space](docs/screenshots/overlay-negativeSpace.png) | ![S-Curve](docs/screenshots/overlay-sCurve.png) |
+| Frame Within Frame | Negative Space | S-Curve |
 
 [Open the complete screenshot gallery](https://prabhuvikas.github.io/Asperito/#screens)
 
@@ -45,6 +49,7 @@
 - Optional shutter timer and 4:3, square, and 16:9 framing.
 - Gold / white / cyan / red composition-guide colors and opacity.
 - Golden Spiral rotate/mirror, custom grid rows/columns, horizon guide.
+- Leading Lines, Symmetry & Reflection, Golden Triangle, Frame Within Frame, Negative Space and S-Curve, with editable positioning, size, rotation or mirroring as appropriate.
 - Photo saving into Photos **without guide overlays baked into pixels**.
 - No login, backend, cloud sync, tracking, or internet required for core app functionality.
 
@@ -57,7 +62,7 @@
 ## Development
 
 **Public app name:** Asperito  
-**Internal Xcode target and repository name:** FrameGuide  
+**Internal Xcode project and target:** FrameGuide (public repository: Asperito)  
 **Minimum iOS:** 17.0
 
 1. Open `FrameGuide.xcodeproj` using Xcode on macOS, or use the GitHub Actions simulator build to validate without a Mac.
@@ -66,7 +71,7 @@
 4. Grant Camera permission, then allow Add Photos when saving a photograph.
 5. Check [the App Review readiness audit](APP_REVIEW_READINESS.md), [PR automation](PR_AUTOMATION.md), [screenshot capture documentation](SCREENSHOT_CAPTURE.md), and [privacy policy](PRIVACY.md).
 
-GitHub Actions captures 17 UI screenshots with `simctl` and makes them available as downloadable artifacts. The website publication workflow copies validated screenshots into `docs/screenshots/` for stable, inspectable links.
+GitHub Actions captures 23 UI screenshots with `simctl` and makes them available as downloadable artifacts. The website publication workflow copies validated screenshots into `docs/screenshots/` for stable, inspectable links.
 
 ## TestFlight status
 

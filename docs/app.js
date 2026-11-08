@@ -11,7 +11,13 @@ const guides=[
 {id:"safeArea",title:"Social Safe Area",description:"Compose for the crop. Keep the important parts of the frame where they belong."},
 {id:"perspective",title:"Perspective Lines",description:"Find the vanishing point and let architecture, roads and leading lines tell a story."},
 {id:"cinematic",title:"Cinematic Frame",description:"Think widescreen. Explore mood and narrative through a cinematic frame."},
-{id:"custom",title:"Custom Grid",description:"No rules but yours. Customize the number of grid rows and columns."}
+{id:"custom",title:"Custom Grid",description:"No rules but yours. Customize the number of grid rows and columns."},
+{id:"leadingLines",title:"Leading Lines",description:"Manually position a vanishing point and follow the converging guides toward your subject."},
+{id:"reflection",title:"Symmetry & Reflection",description:"Choose a vertical or horizontal axis for architecture, mirrors and water reflections."},
+{id:"goldenTriangle",title:"Golden Triangle",description:"Find dynamic balance across an elegant diagonal and two supporting divisions."},
+{id:"frameWithinFrame",title:"Frame Within Frame",description:"Adjust an inner frame to compose through doorways, arches and windows."},
+{id:"negativeSpace",title:"Negative Space",description:"Position your subject, then leave intentional breathing room in the direction it faces."},
+{id:"sCurve",title:"S-Curve",description:"Follow the natural flow of winding roads, rivers and walking paths."}
 ];
 const prefersReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const guideTitle=document.querySelector("#guide-title"),guideDescription=document.querySelector("#guide-description");

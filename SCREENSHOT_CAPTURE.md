@@ -1,6 +1,6 @@
 # Asperito screenshot capture pack
 
-The iOS Actual Screenshots GitHub Action builds the real app in Debug on an iPhone Simulator and saves 17 original PNGs as a downloadable artifact.
+The iOS Actual Screenshots GitHub Action builds the real app in Debug on an iPhone Simulator and saves 23 original PNGs as a downloadable artifact.
 
 **Camera limitation:** The Simulator has no live camera. Camera and overlay screenshots display a deterministic *simulator landscape fixture* beneath the actual SwiftUI camera UI and real vector guide rendering. These are UI inspection screenshots, not photographs and not evidence of the real camera hardware working.
 
@@ -10,7 +10,7 @@ The iOS Actual Screenshots GitHub Action builds the real app in Debug on an iPho
 |---|---|
 | onboarding.png | Director-inspired onboarding, brand and call to action |
 | camera.png | Camera interface / default Rule of Thirds |
-| picker.png | 12-guide selection library |
+| picker.png | 18-guide selection library |
 | tutorial.png | Golden Spiral tutorial |
 | settings.png | Overlay color and camera controls |
 | overlay-thirds.png | Rule of Thirds |
@@ -25,6 +25,12 @@ The iOS Actual Screenshots GitHub Action builds the real app in Debug on an iPho
 | overlay-perspective.png | Perspective Lines |
 | overlay-cinematic.png | Cinematic Frame |
 | overlay-custom.png | Custom Grid |
+| overlay-leadingLines.png | Leading Lines |
+| overlay-reflection.png | Symmetry & Reflection |
+| overlay-goldenTriangle.png | Golden Triangle |
+| overlay-frameWithinFrame.png | Frame Within Frame |
+| overlay-negativeSpace.png | Negative Space |
+| overlay-sCurve.png | S-Curve |
 
 ## Suggested App Store story order (only after true-device photography tests)
 1. Frame better photos — Rule of Thirds

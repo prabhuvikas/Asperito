@@ -34,24 +34,26 @@ jobs:
           ref: feat/ios-mvp
           persist-credentials: true
 
-      - name: Retrieve verified 17-screen simulator artifact
+      - name: Retrieve latest verified 23-screen simulator artifact
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
-          mkdir -p docs/screenshots
-          # Verified successful capture (all 17 frames, including Custom Grid).
-          mkdir -p /tmp/asperito-capture
-          gh run download 42395032783 \
-            --repo "$GITHUB_REPOSITORY" \
-            --name asperito-all-17-screens \
-            --dir /tmp/asperito-capture
+          mkdir -p docs/screenshots /tmp/asperito-capture
+          RUN_ID=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow screenshots.yml --branch feat/ios-mvp --status success --limit 20 --json databaseId,headSha --jq '.[0].databaseId')
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "::error::A successful 23-screen capture is required before publishing."
+            exit 1
+          fi
+          echo "Using screenshot run: $RUN_ID"
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name asperito-all-23-screens --dir /tmp/asperito-capture
+          test "$(find /tmp/asperito-capture -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "23"
           cp -f /tmp/asperito-capture/*.png docs/screenshots/
           cp -f FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg docs/director.jpg
-          test "$(find docs/screenshots -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "17"
-          file docs/screenshots/overlay-custom.png
-          file docs/screenshots/onboarding.png
-          test "$(stat -c%s docs/screenshots/overlay-custom.png)" -gt 120000
+          test "$(find docs/screenshots -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "23"
+          file docs/screenshots/overlay-sCurve.png docs/screenshots/overlay-goldenTriangle.png
+          test "$(stat -c%s docs/screenshots/overlay-sCurve.png)" -gt 120000
           ls -lh docs/screenshots/
 
       - name: Commit actual screenshots to GitHub documentation
@@ -65,7 +67,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Screenshot files already current."
           else
-            git commit -m "docs: embed 17 verified iOS Simulator screenshots"
+            git commit -m "docs: embed 23 verified iOS Simulator screenshots"
             git push origin HEAD:feat/ios-mvp
           fi
 
@@ -78,7 +80,7 @@ jobs:
           from pathlib import Path
           from html.parser import HTMLParser
           root=Path("docs")
-          assert len(list((root/"screenshots").glob("*.png")))==17, "Expected 17 screenshot PNGs"
+          assert len(list((root/"screenshots").glob("*.png")))==23, "Expected 23 screenshot PNGs"
           class Page(HTMLParser):
               def __init__(self): super().__init__(); self.images=[]; self.links=[]
               def handle_starttag(self, tag, attrs):
@@ -90,7 +92,7 @@ jobs:
           for src in p.images+p.links:
               if src.startswith("./"): assert (root/src[2:]).exists(), f"Missing {src}"
           assert len(p.images)>=10
-          print(f"Verified {len(p.images)} website images, all scripts and CSS, and 17 source screenshots")
+          print(f"Verified {len(p.images)} website images, all scripts and CSS, and 23 source screenshots")
           PY
 
       - name: Render desktop and iPhone website previews
@@ -112,7 +114,11 @@ jobs:
               await page.goto(base,{waitUntil:"networkidle"});
               await page.evaluate(async () => { document.querySelectorAll("img").forEach(img=>{img.loading="eager"}); await Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))); });
               const expected=await page.locator(".guide-option").count();
-              if(expected!==12)throw Error("Expected 12 interactive composition guides; found "+expected);
+              if(expected!==18)throw Error("Expected 18 interactive composition guides; found "+expected);
+              await page.locator('[data-guide="sCurve"]').click();
+              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("sCurve"),{timeout:5000});
+              await page.locator('[data-guide="goldenTriangle"]').click();
+              await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("goldenTriangle"),{timeout:5000});
               await page.locator('[data-guide="goldenSpiral"]').click();
               await page.waitForFunction(() => document.querySelector("#guide-image")?.getAttribute("src")?.includes("goldenSpiral"),{timeout:5000});
               const src=await page.locator("#guide-image").getAttribute("src");
@@ -153,7 +159,7 @@ jobs:
           {
             echo "### Asperito immersive website"
             echo "- Source: docs/index.html, docs/style.css, docs/app.js"
-            echo "- Screenshots: 17 real Simulator captures (synthetic landscape under live SwiftUI guides)"
+            echo "- Screenshots: 23 real Simulator captures (synthetic landscape under live SwiftUI guides)"
             echo "- GitHub Pages: https://prabhuvikas.github.io/Asperito/"
             echo "- If Pages configuration fails, enable **Settings → Pages → Build and deployment → GitHub Actions** and rerun this workflow."
           } >> "$GITHUB_STEP_SUMMARY"
