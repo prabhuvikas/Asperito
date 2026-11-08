@@ -170,6 +170,22 @@ jobs:
               const heroImage=page.locator(".hero-device img");
               if(!(await heroImage.evaluate(img=>img.complete&&img.naturalWidth>1000)))
                 throw Error("Cinematic Minimal hero screenshot missing");
+              const heroSrc=await page.locator(".hero-device img").getAttribute("src");
+              if(!heroSrc?.includes("overlay-goldenSpiral.png"))
+                throw Error("Cover must display the Golden Spiral, got "+heroSrc);
+              if(!(await page.locator(".hero-device img").evaluate(img=>img.complete&&img.naturalWidth>0)))
+                throw Error("Golden Spiral hero screenshot failed to load");
+              const firstGallery=page.locator("#screen-carousel figure").first();
+              const firstSrc=await firstGallery.locator("img").getAttribute("src");
+              if(!firstSrc?.includes("overlay-goldenSpiral.png"))
+                throw Error("First gallery item must be Golden Spiral, got "+firstSrc);
+              if(!(await firstGallery.locator("img").evaluate(img=>img.complete&&img.naturalWidth>0)))
+                throw Error("Golden Spiral gallery screenshot failed to load");
+              if(!(await firstGallery.locator("figcaption").innerText()).includes("Golden Spiral"))
+                throw Error("First gallery caption should say Golden Spiral");
+              const cameraShowcase=await page.locator("#camera-design img").getAttribute("src");
+              if(!cameraShowcase?.includes("screenshots/camera.png"))
+                throw Error("Keep Cinematic Minimal camera as supporting showcase");
               const carousel=page.locator("#guide-carousel");
               if(!(await carousel.count()))throw Error("Guide carousel missing");
               const expected=await page.locator("#guide-next").count();
