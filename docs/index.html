@@ -23,7 +23,7 @@
   <header class="site-nav" id="site-nav">
     <a class="brand" href="#top" aria-label="Asperito home"><span class="brand-emblem" aria-hidden="true">⌗</span> ASPERITO</a>
     <nav aria-label="Main navigation" class="desktop-nav">
-      <a href="#guides">Composition</a><a href="#craft">The experience</a><a href="#screens">Screens</a>
+      <a href="#guides">Composition</a><a href="#gesture">Gestures</a><a href="#craft">The experience</a><a href="#screens">Screens</a>
     </nav>
     <a class="nav-cta" href="https://github.com/prabhuvikas/Asperito" target="_blank" rel="noopener noreferrer">Explore project <span aria-hidden="true">↗</span></a>
   </header>
@@ -105,9 +105,51 @@
       </div>
     </section>
 
+    <section id="gesture" class="gesture-section" aria-labelledby="gesture-heading">
+      <div class="gesture-copy observe">
+        <span class="eyebrow">02 / INTUITIVE CONTROL</span>
+        <h2 id="gesture-heading">Compose with<br><em>a gesture.</em></h2>
+        <p>Your composition should follow your imagination. Place two fingers on the live viewfinder and twist. The gold guide turns smoothly while the scene—and your final photograph—stay exactly where they are.</p>
+        <div class="gesture-facts">
+          <div><span class="fact-mark" aria-hidden="true">01</span><strong>Twist with two fingers</strong><small>Rotate creative guides to any angle</small></div>
+          <div><span class="fact-mark" aria-hidden="true">02</span><strong>Feel the alignment</strong><small>Subtle feedback near each quarter turn on iPhone</small></div>
+          <div><span class="fact-mark" aria-hidden="true">03</span><strong>Come back to your frame</strong><small>Each guide remembers its own orientation</small></div>
+        </div>
+        <div class="gesture-actions">
+          <button type="button" class="button button-gold" id="gesture-replay">Replay the gesture <span aria-hidden="true">↻</span></button>
+          <button type="button" class="button button-outline" id="gesture-pause" aria-pressed="false">Pause animation</button>
+        </div>
+        <p class="gesture-disclosure">Motion illustration of the actual two-finger feature. This is an animated explanation, not recorded multitouch footage. On iPhone, tap-to-focus remains available.</p>
+      </div>
+      <div class="gesture-stage observe" aria-label="Animated example: two fingertips rotate a gold composition guide above a fixed camera image">
+        <div class="gesture-aura" aria-hidden="true"></div>
+        <div class="gesture-phone">
+          <div class="gesture-phone-island" aria-hidden="true"></div>
+          <img class="gesture-camera-image" src="./screenshots/camera.png" loading="lazy" width="1206" height="2622" alt="Actual Asperito Simulator camera interface, used as the stationary illustration background">
+          <div class="gesture-viewfinder" aria-hidden="true">
+            <svg class="gesture-diagram" viewBox="0 0 250 410" preserveAspectRatio="none">
+              <g class="gesture-guide">
+                <path d="M17 34 L232 377 M229 34 L86 144 M17 377 L163 270" stroke="#f3cc86" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                <circle cx="125" cy="205" r="4" fill="#f3cc86"/>
+              </g>
+              <g class="gesture-fingers">
+                <circle cx="87" cy="187" r="19" class="finger-ring"/>
+                <ellipse cx="87" cy="187" rx="11" ry="16" class="finger-tip"/>
+                <circle cx="163" cy="223" r="19" class="finger-ring"/>
+                <ellipse cx="163" cy="223" rx="11" ry="16" class="finger-tip"/>
+              </g>
+            </svg>
+          </div>
+          <div class="gesture-angle" id="gesture-angle" aria-hidden="true">0°</div>
+          <div class="gesture-caption"><span class="gesture-status-dot"></span><span id="gesture-status">TWO-FINGER ROTATION</span></div>
+        </div>
+        <div class="gesture-hint">THE SCENE STAYS STILL <span aria-hidden="true">✦</span> ONLY THE GUIDE MOVES</div>
+      </div>
+    </section>
+
     <section id="craft" class="craft-section">
       <div class="craft-title observe">
-        <span class="eyebrow">02 / EXPERIENCE</span>
+        <span class="eyebrow">03 / EXPERIENCE</span>
         <h2>The details<br>make the <em>difference.</em></h2>
         <p>Designed to stay out of the picture—and give you everything you need to create it.</p>
       </div>
@@ -139,7 +181,7 @@
     </section>
 
     <section id="screens" class="screens-section">
-      <div class="screens-heading observe"><div><span class="eyebrow">03 / THE APP</span><h2>Every screen.<br>Considered.</h2></div><p>A look inside the real Asperito iPhone app. Swipe to explore.</p></div>
+      <div class="screens-heading observe"><div><span class="eyebrow">04 / THE APP</span><h2>Every screen.<br>Considered.</h2></div><p>A look inside the real Asperito iPhone app. Swipe to explore.</p></div>
       <div class="screen-carousel" id="screen-carousel" aria-label="Asperito screenshot gallery" tabindex="0">
         <figure><img loading="lazy" src="./screenshots/onboarding.png" width="1206" height="2622" alt="Asperito onboarding screen"><figcaption>Welcome</figcaption></figure>
         <figure><img loading="lazy" src="./screenshots/camera.png" width="1206" height="2622" alt="Asperito camera view"><figcaption>The camera</figcaption></figure>

@@ -130,6 +130,20 @@ jobs:
                 }
               }
               await page.locator('[data-guide="thirds"]').click();
+              const gesture=page.locator("#gesture");
+              if(!(await gesture.isVisible()))throw Error("Gesture feature section not visible");
+              if(!(await page.locator("#gesture-replay").isVisible()))throw Error("Gesture replay control missing");
+              if(!(await page.locator("#gesture-pause").isVisible()))throw Error("Gesture play/pause control missing");
+              await page.locator("#gesture-replay").click();
+              await page.waitForFunction(() => document.querySelector("#gesture-angle")?.textContent==="0°",{timeout:2500});
+              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
+                throw Error("Replay must enable motion");
+              await page.locator("#gesture-pause").click();
+              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="true")
+                throw Error("Pause control did not work");
+              await page.locator("#gesture-replay").click();
+              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
+                throw Error("Replay failed to resume");
               const overflow=await page.evaluate(() =>
                 document.documentElement.scrollWidth > window.innerWidth + 8);
               if(overflow)throw Error("Horizontal overflow on "+name);
