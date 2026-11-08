@@ -119,31 +119,21 @@
           <button type="button" class="button button-gold" id="gesture-replay">Replay the gesture <span aria-hidden="true">↻</span></button>
           <button type="button" class="button button-outline" id="gesture-pause" aria-pressed="false">Pause animation</button>
         </div>
-        <p class="gesture-disclosure">Motion illustration of the actual two-finger feature. This is an animated explanation, not recorded multitouch footage. On iPhone, tap-to-focus remains available.</p>
+        <p class="gesture-disclosure">Recorded directly from the running Asperito iPhone Simulator app. This shows the in-camera tutorial animation; actual two-finger touch response and haptics still require a physical iPhone.</p>
       </div>
-      <div class="gesture-stage observe" aria-label="Animated example: two fingertips rotate a gold composition guide above a fixed camera image">
+      <div class="gesture-stage observe" aria-label="Real running Asperito iPhone Simulator recording of its in-camera two-finger gesture tutorial">
         <div class="gesture-aura" aria-hidden="true"></div>
-        <div class="gesture-phone">
+        <div class="gesture-phone gesture-real-app">
           <div class="gesture-phone-island" aria-hidden="true"></div>
-          <img class="gesture-camera-image" src="./screenshots/camera.png" loading="lazy" width="1206" height="2622" alt="Actual Asperito Simulator camera interface, used as the stationary illustration background">
-          <div class="gesture-viewfinder" aria-hidden="true">
-            <svg class="gesture-diagram" viewBox="0 0 250 410" preserveAspectRatio="none">
-              <g class="gesture-guide">
-                <path d="M17 34 L232 377 M229 34 L86 144 M17 377 L163 270" stroke="#f3cc86" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-                <circle cx="125" cy="205" r="4" fill="#f3cc86"/>
-              </g>
-              <g class="gesture-fingers">
-                <circle cx="87" cy="187" r="19" class="finger-ring"/>
-                <ellipse cx="87" cy="187" rx="11" ry="16" class="finger-tip"/>
-                <circle cx="163" cy="223" r="19" class="finger-ring"/>
-                <ellipse cx="163" cy="223" rx="11" ry="16" class="finger-tip"/>
-              </g>
-            </svg>
-          </div>
-          <div class="gesture-angle" id="gesture-angle" aria-hidden="true">0°</div>
-          <div class="gesture-caption"><span class="gesture-status-dot"></span><span id="gesture-status">TWO-FINGER ROTATION</span></div>
+          <video id="gesture-video" class="gesture-recording" muted playsinline loop preload="metadata"
+                 poster="./screenshots/camera.png"
+                 aria-label="Asperito's real iPhone Simulator camera showing the Twist two fingers tutorial: gold guide rotates with two fingertip markers, while Replay and Try it controls stay on the camera screen.">
+            <source src="./media/gesture-in-camera.mp4" type="video/mp4">
+            Your browser does not support video. The guide rotates under two fingertip markers within Asperito's camera.
+          </video>
+          <div class="gesture-recording-label"><span class="gesture-status-dot" aria-hidden="true"></span> RECORDED FROM ASPERITO ON iOS SIMULATOR</div>
         </div>
-        <div class="gesture-hint">THE SCENE STAYS STILL <span aria-hidden="true">✦</span> ONLY THE GUIDE MOVES</div>
+        <div class="gesture-hint">ACTUAL IN-APP CAMERA TUTORIAL <span aria-hidden="true">✦</span> NOT A WEB MOCKUP</div>
       </div>
     </section>
 

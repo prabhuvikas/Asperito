@@ -106,6 +106,50 @@ jobs:
           PY
           test "$(find screenshots -name '*.png' | wc -l | tr -d ' ')" = "23"
 
+      - name: Record actual in-camera gesture animation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p gesture-video
+          python3 - <<'PY'
+          import os,subprocess,time,signal,pathlib
+          udid=os.environ["SIMULATOR_UDID"]
+          bundle="com.frameguide.ios"
+          out=pathlib.Path("gesture-video/gesture-in-camera.mp4")
+          subprocess.run(["xcrun","simctl","terminate",udid,bundle],capture_output=True,timeout=30)
+          launch=subprocess.run(["xcrun","simctl","launch",udid,bundle,"--asperito-screen=gesture"],
+                                capture_output=True,text=True,timeout=60)
+          if launch.returncode: raise RuntimeError("Gesture camera failed to launch: "+launch.stderr)
+          time.sleep(2)
+          command=["xcrun","simctl","io",udid,"recordVideo","--codec=h264","--force",str(out)]
+          recorder=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+          try:
+              time.sleep(8)
+          finally:
+              recorder.send_signal(signal.SIGINT)
+              try: stdout,stderr=recorder.communicate(timeout=35)
+              except subprocess.TimeoutExpired:
+                  recorder.kill()
+                  stdout,stderr=recorder.communicate()
+                  raise RuntimeError("Simulator video recorder timed out")
+          print("Recording output:",stderr.decode(errors="replace")[-1600:])
+          if recorder.returncode not in (0,130): raise RuntimeError(f"recordVideo exited {recorder.returncode}")
+          if not out.exists() or out.stat().st_size < 100000:
+              raise RuntimeError("Missing or incomplete in-app camera gesture movie")
+          print("Actual in-app gesture video:",out,"bytes:",out.stat().st_size)
+          PY
+          file gesture-video/gesture-in-camera.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 gesture-video/gesture-in-camera.mp4
+          test "$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 gesture-video/gesture-in-camera.mp4 | awk '{print ($1 >= 5 && $1 <= 15) ? 1 : 0}')" = "1"
+
+      - name: Upload actual in-camera gesture video
+        uses: actions/upload-artifact@v6
+        with:
+          name: asperito-in-camera-gesture-video
+          path: gesture-video/gesture-in-camera.mp4
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Upload unmodified screenshots
         if: always()
         uses: actions/upload-artifact@v6

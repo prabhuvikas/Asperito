@@ -54,79 +54,38 @@ carousel?.addEventListener("keydown",event=>{if(!["ArrowRight","ArrowLeft"].incl
 document.querySelector("#year").textContent=String(new Date().getFullYear());
 
 
-// The gesture sequence is an honest, stylized SVG explanation. The underlying
-// screenshot stays fixed; only the translucent guide and finger markers move.
-// No attempt is made to simulate the actual iOS multitouch recognizer in a browser.
+// Real Simulator screen recording; no fabricated web overlay or rotated SVG.
+// The video includes Asperito's native camera chrome, teaching controls, and
+// animated SwiftUI composition guide. Browser controls manage playback only.
 const gestureSection=document.querySelector("#gesture");
+const gestureVideo=document.querySelector("#gesture-video");
 const replayButton=document.querySelector("#gesture-replay");
 const pauseButton=document.querySelector("#gesture-pause");
-const gestureAngle=document.querySelector("#gesture-angle");
-const gestureStatus=document.querySelector("#gesture-status");
-let gesturePaused=prefersReduced;
-let gestureFrame=null;
-let gestureStart=null;
-let gestureElapsed=0;
-const gestureDuration=5200;
-function gestureTick(timestamp){
-  if(!gestureSection||gesturePaused)return;
-  if(gestureStart===null)gestureStart=timestamp;
-  gestureElapsed=(timestamp-gestureStart)%gestureDuration;
-  const fraction=gestureElapsed/gestureDuration;
-  // Match the CSS motion: 0° hold, turn to 58°, then hold the final position.
-  const p=fraction<.14?0:fraction>.67?1:(fraction-.14)/.53;
-  const eased=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
-  gestureAngle.textContent=Math.round(eased*58)+"°";
-  gestureStatus.textContent=fraction>.72?"ANGLE SAVED FOR THIS GUIDE":"TWO-FINGER ROTATION";
-  gestureFrame=requestAnimationFrame(gestureTick);
-}
-function beginGesture(){
-  if(!gestureSection)return;
-  if(gestureFrame!==null)cancelAnimationFrame(gestureFrame);
-  gestureFrame=null;
-  gestureStart=null;
-  gestureElapsed=0;
-  gestureAngle.textContent="0°";
-  gestureStatus.textContent="TWO-FINGER ROTATION";
-  gestureSection.classList.remove("gesture-active");
-  // Reflow deliberately restarts the matching SVG/CSS keyframe animation.
-  void gestureSection.offsetWidth;
-  if(!gesturePaused){
-    gestureSection.classList.add("gesture-active");
-    gestureFrame=requestAnimationFrame(gestureTick);
-  }
-}
-function toggleGesturePause(paused){
-  gesturePaused=paused;
-  gestureSection?.classList.toggle("gesture-paused",paused);
-  pauseButton?.setAttribute("aria-pressed",String(paused));
-  if(pauseButton)pauseButton.textContent=paused?"Play animation":"Pause animation";
-  if(paused){
-    if(gestureFrame!==null)cancelAnimationFrame(gestureFrame);
-    gestureFrame=null;
-  }else beginGesture();
+function setGesturePlayback(playing){
+  if(!gestureVideo)return;
+  pauseButton?.setAttribute("aria-pressed",String(!playing));
+  if(pauseButton)pauseButton.textContent=playing?"Pause animation":"Play animation";
+  if(playing){
+    const result=gestureVideo.play();
+    if(result&&typeof result.catch==="function"){
+      result.catch(()=>{pauseButton?.setAttribute("aria-pressed","true");if(pauseButton)pauseButton.textContent="Play animation"});
+    }
+  }else gestureVideo.pause();
 }
 replayButton?.addEventListener("click",()=>{
-  if(gesturePaused)toggleGesturePause(false);
-  else beginGesture();
+  if(!gestureVideo)return;
+  gestureVideo.currentTime=0;
+  setGesturePlayback(true);
 });
-pauseButton?.addEventListener("click",()=>toggleGesturePause(!gesturePaused));
-if(gestureSection){
+pauseButton?.addEventListener("click",()=>setGesturePlayback(gestureVideo.paused));
+if(gestureVideo){
   if(prefersReduced){
-    gestureSection.classList.add("gesture-reduced");
-    gestureAngle.textContent="58°";
-    gestureStatus.textContent="GUIDE ORIENTATION SAVED";
-    toggleGesturePause(true);
-  }else{
-    const gestureObserver=new IntersectionObserver(entries=>{
-      const visible=entries.some(e=>e.isIntersecting);
-      if(visible&&!gesturePaused&&!gestureSection.classList.contains("gesture-active"))beginGesture();
-      if(!visible){
-        if(gestureFrame!==null)cancelAnimationFrame(gestureFrame);
-        gestureFrame=null;
-        gestureSection.classList.remove("gesture-active");
-        gestureStart=null;
-      }
-    },{threshold:.12});
-    gestureObserver.observe(gestureSection);
-  }
+    setGesturePlayback(false);
+  }else if("IntersectionObserver" in window){
+    const obs=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting))setGesturePlayback(true);
+      else setGesturePlayback(false);
+    },{threshold:0.15});
+    obs.observe(gestureSection);
+  }else setGesturePlayback(true);
 }

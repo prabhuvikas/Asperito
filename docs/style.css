@@ -36,3 +36,10 @@
 @media(max-width:950px){.gesture-section{grid-template-columns:1fr;gap:20px;padding:90px 26px}.gesture-copy{max-width:670px;margin:auto}.gesture-stage{min-height:600px}.gesture-phone{width:min(300px,68vw)}}
 @media(max-width:500px){.gesture-section{padding:76px 23px}.gesture-copy h2{font-size:clamp(49px,12vw,68px)}.gesture-copy>p:not(.gesture-disclosure){font-size:15px}.gesture-stage{min-height:580px}.gesture-phone{width:min(284px,77vw)}.gesture-facts{gap:15px}}
 @media(prefers-reduced-motion:reduce){.gesture-section .gesture-guide,.gesture-section .gesture-fingers,.gesture-section .finger-ring{animation:none!important}.gesture-section .gesture-guide{transform:rotate(58deg)}.gesture-section .gesture-fingers{transform:rotate(58deg)}}
+
+/* The gesture illustration is an actual in-app simulator screen recording. */
+.gesture-phone.gesture-real-app{overflow:hidden}
+.gesture-recording{display:block;width:100%;height:100%;object-fit:cover;background:#0b1220}
+.gesture-recording-label{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:8;width:max-content;max-width:96%;padding:7px 9px;display:flex;align-items:center;gap:6px;border-radius:16px;color:#f0d4a9;background:#101926ed;border:1px solid #dfb97888;font-size:7px;font-weight:700;letter-spacing:.8px;pointer-events:none}
+.gesture-recording-label .gesture-status-dot{flex-shrink:0}
+.gesture-real-app .gesture-phone-island{pointer-events:none}

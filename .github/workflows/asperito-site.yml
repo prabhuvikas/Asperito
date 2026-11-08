@@ -56,6 +56,30 @@ jobs:
           test "$(stat -c%s docs/screenshots/overlay-sCurve.png)" -gt 120000
           ls -lh docs/screenshots/
 
+      - name: Retrieve real iOS in-camera tutorial video
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/media /tmp/asperito-gesture-video
+          # The iOS capture is a separate macOS run. Wait for an actual
+          # recording artifact, never replace it with fabricated browser motion.
+          for attempt in $(seq 1 48); do
+            VIDEO_RUN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow screenshots.yml --branch feat/ios-mvp --status success --limit 20 --json databaseId --jq '.[0].databaseId')
+            if [ -n "$VIDEO_RUN" ] && [ "$VIDEO_RUN" != "null" ]; then
+              if gh run download "$VIDEO_RUN" --repo "$GITHUB_REPOSITORY" --name asperito-in-camera-gesture-video --dir /tmp/asperito-gesture-video; then
+                break
+              fi
+            fi
+            echo "Waiting for verified Simulator camera recording ($attempt/48)"
+            sleep 20
+          done
+          test -s /tmp/asperito-gesture-video/gesture-in-camera.mp4
+          cp /tmp/asperito-gesture-video/gesture-in-camera.mp4 docs/media/gesture-in-camera.mp4
+          test "$(stat -c%s docs/media/gesture-in-camera.mp4)" -gt 100000
+          file docs/media/gesture-in-camera.mp4
+
       - name: Commit actual screenshots to GitHub documentation
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,7 +87,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/ docs/director.jpg
+          git add docs/screenshots/ docs/director.jpg docs/media/gesture-in-camera.mp4
           if git diff --cached --quiet; then
             echo "Screenshot files already current."
           else
@@ -81,6 +105,8 @@ jobs:
           from html.parser import HTMLParser
           root=Path("docs")
           assert len(list((root/"screenshots").glob("*.png")))==23, "Expected 23 screenshot PNGs"
+          movie=root/"media/gesture-in-camera.mp4"
+          assert movie.exists() and movie.stat().st_size>100000, "Missing real in-app gesture recording"
           class Page(HTMLParser):
               def __init__(self): super().__init__(); self.images=[]; self.links=[]
               def handle_starttag(self, tag, attrs):
@@ -131,19 +157,19 @@ jobs:
               }
               await page.locator('[data-guide="thirds"]').click();
               const gesture=page.locator("#gesture");
-              if(!(await gesture.isVisible()))throw Error("Gesture feature section not visible");
-              if(!(await page.locator("#gesture-replay").isVisible()))throw Error("Gesture replay control missing");
-              if(!(await page.locator("#gesture-pause").isVisible()))throw Error("Gesture play/pause control missing");
+              if(!(await gesture.isVisible()))throw Error("Camera tutorial section absent");
+              const movie=page.locator("#gesture-video");
+              if(!(await movie.count()))throw Error("Actual camera movie absent");
+              const source=await movie.locator("source").getAttribute("src");
+              if(source!=="./media/gesture-in-camera.mp4")throw Error("Not playing real simulator recording");
               await page.locator("#gesture-replay").click();
-              await page.waitForFunction(() => document.querySelector("#gesture-angle")?.textContent==="0°",{timeout:2500});
-              if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
-                throw Error("Replay must enable motion");
+              await page.waitForFunction(()=>document.querySelector("#gesture-video")?.currentTime>0,{timeout:6000});
               await page.locator("#gesture-pause").click();
               if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="true")
-                throw Error("Pause control did not work");
+                throw Error("Pause control broken");
               await page.locator("#gesture-replay").click();
               if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
-                throw Error("Replay failed to resume");
+                throw Error("Replay control broken");
               const overflow=await page.evaluate(() =>
                 document.documentElement.scrollWidth > window.innerWidth + 8);
               if(overflow)throw Error("Horizontal overflow on "+name);
@@ -151,25 +177,23 @@ jobs:
               await page.screenshot({path:"site-preview/"+name+".png",fullPage:true,animations:"disabled"});
               await page.close();
             }
-            // Verify the actual animation in a normal-motion browser, not only
-            // the static reduced-motion screenshots.
+            // Video pixels are captured from a real Simulator application.
+            // Verify media playback, reduced-motion no-autoplay, and UI controls.
             const motionPage=await browser.newPage({viewport:{width:1000,height:800},reducedMotion:"no-preference"});
             await motionPage.goto(base,{waitUntil:"networkidle"});
             await motionPage.locator("#gesture-replay").click();
             await motionPage.waitForFunction(() =>
-              parseInt(document.querySelector("#gesture-angle")?.textContent||"0",10)>10,
-              {timeout:4500});
-            const running=await motionPage.locator(".gesture-guide").evaluate(el =>
-              getComputedStyle(el).animationName);
-            if(!running.includes("asperito-rotate"))throw Error("Rotating motion graphic not running");
-            await motionPage.locator("#gesture-pause").click();
-            if(await motionPage.locator("#gesture-pause").getAttribute("aria-pressed")!=="true")
-              throw Error("Motion pause control did not stop the demo");
+              document.querySelector("#gesture-video")?.currentTime>.5,{timeout:9000});
+            const mediaInfo=await motionPage.locator("#gesture-video").evaluate(video=>({
+              duration:video.duration,readyState:video.readyState,width:video.videoWidth,height:video.videoHeight
+            }));
+            if(!(mediaInfo.duration>5&&mediaInfo.width>0&&mediaInfo.height>0))
+              throw Error("Simulator gesture video unreadable: "+JSON.stringify(mediaInfo));
             await motionPage.close();
             const accessibilityPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,reducedMotion:"reduce"});
             await accessibilityPage.goto(base,{waitUntil:"networkidle"});
-            if(!(await accessibilityPage.locator("#gesture").evaluate(el=>el.classList.contains("gesture-reduced"))))
-              throw Error("Reduced motion must disable autoplay");
+            const notAutoplaying=await accessibilityPage.locator("#gesture-video").evaluate(video=>video.paused);
+            if(!notAutoplaying)throw Error("Reduced motion should disable video autoplay");
             await accessibilityPage.close();
             await browser.close();
           })().catch(error=>{console.error(error);process.exit(1)});
