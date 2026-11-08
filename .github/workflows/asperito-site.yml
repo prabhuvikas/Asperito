@@ -154,6 +154,6 @@ jobs:
             echo "### Asperito immersive website"
             echo "- Source: docs/index.html, docs/style.css, docs/app.js"
             echo "- Screenshots: 17 real Simulator captures (synthetic landscape under live SwiftUI guides)"
-            echo "- GitHub Pages: https://prabhuvikas.github.io/FrameGuide/"
+            echo "- GitHub Pages: https://prabhuvikas.github.io/Asperito/"
             echo "- If Pages configuration fails, enable **Settings → Pages → Build and deployment → GitHub Actions** and rerun this workflow."
           } >> "$GITHUB_STEP_SUMMARY"

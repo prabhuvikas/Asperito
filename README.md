@@ -8,7 +8,7 @@
 
 12 live guides · Offline lessons · Your images, without grid lines
 
-[Explore the immersive website](https://prabhuvikas.github.io/FrameGuide/) · [Browse screenshots](docs/index.html#screens) · [Read the setup guide](#development)
+[Explore the immersive website](https://prabhuvikas.github.io/Asperito/) · [Browse screenshots](docs/index.html#screens) · [Read the setup guide](#development)
 
 </div>
 
@@ -36,7 +36,7 @@
 | ![Perspective Lines](docs/screenshots/overlay-perspective.png) | ![Cinematic Frame](docs/screenshots/overlay-cinematic.png) | ![Custom Grid](docs/screenshots/overlay-custom.png) |
 | Perspective Lines | Cinematic Frame | Custom Grid |
 
-[Open the complete screenshot gallery](https://prabhuvikas.github.io/FrameGuide/#screens)
+[Open the complete screenshot gallery](https://prabhuvikas.github.io/Asperito/#screens)
 
 ## Camera essentials
 

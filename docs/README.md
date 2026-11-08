@@ -10,7 +10,7 @@ This directory is a fully static, mobile-first GitHub Pages experience for **Asp
 
 ## Live URL
 
-https://prabhuvikas.github.io/FrameGuide/
+https://prabhuvikas.github.io/Asperito/
 
 Publishing is configured in `.github/workflows/asperito-site.yml` and targets the `feat/ios-mvp` development branch. **One-time owner action may be required:** open repository Settings → Pages and set Build and deployment source to **GitHub Actions**. Then rerun the **Asperito Website + Screenshots** workflow. After merging the feature branch, update the workflow trigger and checkout ref to `main`.
 
