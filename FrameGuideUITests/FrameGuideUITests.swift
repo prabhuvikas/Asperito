@@ -58,8 +58,12 @@ final class FrameGuideUITests: XCTestCase {
         let toggle = app.switches["Show guide"]
         XCTAssertTrue(toggle.exists)
         let initial = toggle.value as? String
+        let expected = initial == "1" ? "0" : "1"
         toggle.tap()
-        XCTAssertNotEqual(toggle.value as? String, initial)
+        let changed = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@",expected), object:toggle)
+        XCTAssertEqual(XCTWaiter.wait(for:[changed],timeout:8),.completed,
+                       "Show guide switch did not change after tapping")
         app.buttons["Privacy policy"].tap()
         XCTAssertTrue(app.staticTexts["Asperito Privacy"].waitForExistence(timeout: 8))
         app.buttons["Done"].tap()
