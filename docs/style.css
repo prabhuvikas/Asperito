@@ -43,3 +43,65 @@
 .gesture-recording-label{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:8;width:max-content;max-width:96%;padding:7px 9px;display:flex;align-items:center;gap:6px;border-radius:16px;color:#f0d4a9;background:#101926ed;border:1px solid #dfb97888;font-size:7px;font-weight:700;letter-spacing:.8px;pointer-events:none}
 .gesture-recording-label .gesture-status-dot{flex-shrink:0}
 .gesture-real-app .gesture-phone-island{pointer-events:none}
+
+
+/* Mobile feature card: keep the camera image in normal document flow.
+   Previously the absolute, angled image overlapped text and was clipped
+   into a giant diagonal stripe in iOS Safari's in-app browser. */
+@media (max-width:760px) {
+  .feature-wide {
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    min-height:0;
+    overflow:hidden;
+  }
+  .feature-wide .feature-words {
+    flex:0 0 auto;
+    width:100%;
+    padding:32px 28px 22px;
+    position:relative;
+    z-index:1;
+  }
+  .feature-wide .feature-words h3 {
+    max-width:100%;
+    font-size:clamp(28px,7.4vw,44px);
+    line-height:1.18;
+    overflow-wrap:break-word;
+  }
+  .feature-wide .feature-words p {
+    max-width:100%;
+    margin-bottom:0;
+    font-size:15px;
+    line-height:1.7;
+  }
+  .feature-wide .feature-visual {
+    position:relative;
+    top:auto;
+    right:auto;
+    bottom:auto;
+    left:auto;
+    width:min(218px,66%);
+    height:300px;
+    flex:0 0 300px;
+    align-self:center;
+    margin:6px auto 0;
+    overflow:hidden;
+    transform:none;
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.38));
+  }
+  .feature-wide .feature-visual img {
+    display:block;
+    width:100%;
+    max-width:100%;
+    height:auto;
+    border:4px solid #444953;
+    border-radius:26px 26px 0 0;
+    transform:none;
+    object-fit:contain;
+  }
+}
+@media (max-width:400px) {
+  .feature-wide .feature-words { padding:28px 22px 18px; }
+  .feature-wide .feature-visual { width:min(190px,64%); height:275px; flex-basis:275px; }
+}

@@ -170,6 +170,29 @@ jobs:
               await page.locator("#gesture-replay").click();
               if(await page.locator("#gesture-pause").getAttribute("aria-pressed")!=="false")
                 throw Error("Replay control broken");
+              if (isMobile) {
+                const geometry=await page.locator(".feature-wide").evaluate(card=>{
+                  const words=card.querySelector(".feature-words");
+                  const image=card.querySelector(".feature-visual");
+                  const cardBox=card.getBoundingClientRect();
+                  const wordsBox=words.getBoundingClientRect();
+                  const imageBox=image.getBoundingClientRect();
+                  return {
+                    card:{left:cardBox.left,right:cardBox.right},
+                    wordsBottom:wordsBox.bottom,
+                    imageTop:imageBox.top,
+                    imageLeft:imageBox.left,
+                    imageRight:imageBox.right,
+                    transform:getComputedStyle(image).transform,
+                    imageLoaded:image.querySelector("img").naturalWidth>0
+                  };
+                });
+                if (geometry.transform!=="none")throw Error("Mobile feature image must not be rotated: "+JSON.stringify(geometry));
+                if (!geometry.imageLoaded || geometry.imageTop<geometry.wordsBottom-1)
+                  throw Error("Feature screenshot overlaps its text: "+JSON.stringify(geometry));
+                if (geometry.imageLeft<geometry.card.left-1 || geometry.imageRight>geometry.card.right+1)
+                  throw Error("Feature screenshot clipped horizontally: "+JSON.stringify(geometry));
+              }
               const overflow=await page.evaluate(() =>
                 document.documentElement.scrollWidth > window.innerWidth + 8);
               if(overflow)throw Error("Horizontal overflow on "+name);
