@@ -77,6 +77,41 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee xcodebuild-test.log
 
+      - name: Generate coverage report and enforce core threshold
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcrun xccov view --report --json TestResults.xcresult > coverage.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          doc=json.loads(Path("coverage.json").read_text())
+          targets=doc.get("targets",[])
+          all_files=[]
+          for target in targets:
+              all_files.extend(target.get("files",[]))
+          expected=["OverlayGeometry.swift","OverlayType.swift","OverlayLesson.swift"]
+          values=[]
+          for name in expected:
+              matches=[f for f in all_files
+                       if name in str(f.get("path","")) or name in str(f.get("name",""))]
+              if not matches:
+                  raise SystemExit(f"Missing xccov data for {name}; cannot pass coverage gate")
+              coverage=float(matches[0]["lineCoverage"])
+              values.append((name,coverage))
+              print(f"{name}: {coverage:.1%}")
+          minimum=0.40
+          failures=[name for name,value in values if value < minimum]
+          summary=Path("coverage-summary.md")
+          summary.write_text("### Core code coverage\n" +
+              "\n".join(f"- {name}: {v:.1%}" for name,v in values) +
+              f"\n- Minimum required per file: {minimum:.0%}\n")
+          if failures:
+              raise SystemExit("Coverage below minimum: "+", ".join(failures))
+          PY
+          cat coverage-summary.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Write test summary
         if: always()
         shell: bash
@@ -84,8 +119,8 @@ jobs:
           {
             echo "### FrameGuide iOS PR checks"
             echo "- Build: iOS Simulator"
-            echo "- Tests: OverlayGeometryTests, OverlayLessonTests, CaptureAspectTests"
-            echo "- Coverage: enabled (see TestResults.xcresult artifact)"
+            echo "- Tests: unit suite + FrameGuideUITests (navigation, privacy, composition and settings)"
+            echo "- Coverage: core code minimum 40% per file (see coverage.json + TestResults.xcresult)"
             echo "- Camera hardware, photo saving and real-device orientation are not covered by simulator tests."
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -98,5 +133,7 @@ jobs:
             xcodebuild-build.log
             xcodebuild-test.log
             TestResults.xcresult/
+            coverage.json
+            coverage-summary.md
           if-no-files-found: warn
           retention-days: 14
