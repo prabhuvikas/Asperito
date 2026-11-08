@@ -151,6 +151,26 @@ jobs:
               await page.screenshot({path:"site-preview/"+name+".png",fullPage:true,animations:"disabled"});
               await page.close();
             }
+            // Verify the actual animation in a normal-motion browser, not only
+            // the static reduced-motion screenshots.
+            const motionPage=await browser.newPage({viewport:{width:1000,height:800},reducedMotion:"no-preference"});
+            await motionPage.goto(base,{waitUntil:"networkidle"});
+            await motionPage.locator("#gesture-replay").click();
+            await motionPage.waitForFunction(() =>
+              parseInt(document.querySelector("#gesture-angle")?.textContent||"0",10)>10,
+              {timeout:4500});
+            const running=await motionPage.locator(".gesture-guide").evaluate(el =>
+              getComputedStyle(el).animationName);
+            if(!running.includes("asperito-rotate"))throw Error("Rotating motion graphic not running");
+            await motionPage.locator("#gesture-pause").click();
+            if(await motionPage.locator("#gesture-pause").getAttribute("aria-pressed")!=="true")
+              throw Error("Motion pause control did not stop the demo");
+            await motionPage.close();
+            const accessibilityPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,reducedMotion:"reduce"});
+            await accessibilityPage.goto(base,{waitUntil:"networkidle"});
+            if(!(await accessibilityPage.locator("#gesture").evaluate(el=>el.classList.contains("gesture-reduced"))))
+              throw Error("Reduced motion must disable autoplay");
+            await accessibilityPage.close();
             await browser.close();
           })().catch(error=>{console.error(error);process.exit(1)});
           JS
