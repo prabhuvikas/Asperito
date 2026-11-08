@@ -73,6 +73,10 @@
 
 GitHub Actions captures 23 UI screenshots with `simctl` and makes them available as downloadable artifacts. The website publication workflow copies validated screenshots into `docs/screenshots/` for stable, inspectable links.
 
+## Quality assurance
+
+The simulator CI suite now includes unit tests, a separate XCUITest integration target, a focused source coverage gate, 23-screen screenshots, and desktop/mobile browser checks for all 18 composition guides. See the [full release acceptance matrix](RELEASE_TEST_PLAN.md) for the **mandatory physical iPhone tests** that cannot be validated in Simulator.
+
 ## TestFlight status
 
 The iOS Simulator build and unit tests have passed. A signed TestFlight release still requires Apple Developer enrollment, real-device hardware/Photos testing, and final App Store Connect metadata. The screenshots on this page are **not** proof of camera quality or hardware testing.
