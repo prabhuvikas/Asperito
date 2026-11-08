@@ -133,7 +133,7 @@
 }
 @media(prefers-reduced-motion:reduce){.guide-progress>div,.guide-arrow{transition:none}}
 
-/* Selected Option 1 showcase: genuine iOS Simulator UI, presented large
+/* Cinematic Minimal showcase: genuine iOS Simulator UI, presented large
    enough to inspect on phones, not as a tiny tilted marketing mockup. */
 .hero-selection{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border:1px solid rgba(232,190,120,.38);border-radius:100px;background:rgba(232,190,120,.07);font-size:10px;letter-spacing:1.45px;font-weight:700;color:var(--gold)}
 .selection-spark{font-size:14px;line-height:1}

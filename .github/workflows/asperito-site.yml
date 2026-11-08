@@ -154,7 +154,7 @@ jobs:
               const chosen=page.locator("#camera-design");
               if(!(await chosen.isVisible()))throw Error("Selected Cinematic Minimal section missing");
               if(!(await chosen.getByRole("heading",{name:/Cinematic\s*Minimal/i}).count()))
-                throw Error("Selected Option 1 title missing");
+                throw Error("Cinematic Minimal title missing");
               const selectedImage=chosen.locator("img");
               const bounds=await selectedImage.evaluate(img=>{
                 const r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();
