@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import FrameGuide
 
 final class OverlayGeometryTests: XCTestCase {
