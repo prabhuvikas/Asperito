@@ -51,7 +51,17 @@ final class FrameGuideUITests: XCTestCase {
         learn.tap()
         XCTAssertTrue(app.staticTexts["Golden Spiral"].waitForExistence(timeout: 8))
     }
-    func testSettingsPrivacyAndGuidePersistence() {
+    func testSettingsPrivacyPolicyIsReachable() {
+        let app = launch("settings")
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 10))
+        let privacy = app.buttons["Privacy policy"]
+        for _ in 0..<4 where !privacy.exists { app.swipeUp() }
+        XCTAssertTrue(privacy.waitForExistence(timeout: 8))
+        privacy.tap()
+        XCTAssertTrue(app.staticTexts["Asperito Privacy"].waitForExistence(timeout: 8))
+    }
+
+    func testSettingsGuideVisibilityPersistsInCamera() {
         let app = launch()
         let initiallyVisible = app.buttons["Hide overlay"].exists
         app.buttons["Settings"].tap()
@@ -59,19 +69,14 @@ final class FrameGuideUITests: XCTestCase {
         let toggle = app.switches["Show guide"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         toggle.tap()
-        // Check the camera's behavior rather than UIKit accessibility's
-        // switch "value", which is unreliable in some Simulator runtimes.
-        app.buttons["Privacy policy"].tap()
-        XCTAssertTrue(app.staticTexts["Asperito Privacy"].waitForExistence(timeout: 8))
-        app.buttons["Done"].tap()
         app.buttons["Done"].tap()
         let expectedButton = initiallyVisible ? "Show overlay" : "Hide overlay"
         XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 8),
-                      "Changing the Settings toggle must update the camera overlay")
+                      "Changing Show guide in settings must update the actual camera UI")
         app.terminate()
         app.launch()
         XCTAssertTrue(app.buttons[expectedButton].waitForExistence(timeout: 10),
-                      "Guide visibility must persist across app launches")
+                      "Guide visibility must survive app termination and relaunch")
     }
     func testOfflineTutorialRenders() {
         let app = launch("tutorial")
