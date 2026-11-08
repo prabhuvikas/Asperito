@@ -68,6 +68,7 @@ struct OverlayPickerView: View {
                 Stepper("Columns: \(columns)",value:$columns,in:2...10)
             case .goldenSpiral:
                 Button("Rotate spiral 90°") { spiralTurns = (spiralTurns + 1) % 4 }
+                Text("The gold arc follows nested golden rectangles. Fine white lines help with framing; no formulas appear on the camera.").font(.footnote).foregroundStyle(.secondary)
                 Toggle("Mirror spiral",isOn:$spiralMirrored)
             case .eyeLine:
                 Text("Eye-line height: \(Int(eyeLine*100))%")

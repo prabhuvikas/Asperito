@@ -25,23 +25,7 @@ enum OverlayGeometry {
             let a = (3 - sqrt(5.0)) / 2
             return [v(a), v(1-a), horizontal(a), horizontal(1-a)]
         case .goldenSpiral:
-            // True logarithmic golden spiral: radius changes by phi per quarter-turn.
-            // Rotate/mirror in normalized coordinates so all device aspect ratios are supported.
-            let center = CGPoint(x: 0.618, y: 0.382)
-            let turns = CGFloat(((settings.spiralTurns % 4) + 4) % 4) * .pi / 2
-            var path = Path()
-            for step in 0...420 {
-                let theta = CGFloat(step) / 420 * 5 * .pi
-                let r = 0.77 * pow(phi, -Double(theta / (.pi / 2)))
-                let originalX = CGFloat(r) * cos(theta)
-                let originalY = CGFloat(r) * sin(theta)
-                let x = settings.spiralMirrored ? -originalX : originalX
-                let nx = center.x + x * cos(turns) - originalY * sin(turns)
-                let ny = center.y + x * sin(turns) + originalY * cos(turns)
-                let p = CGPoint(x: rect.minX + nx * w, y: rect.minY + ny * h)
-                if step == 0 { path.move(to: p) } else { path.addLine(to: p) }
-            }
-            return [GuideStroke(path: path, accent: true)]
+            return goldenSpiralGuides(in: rect, settings: settings)
         case .center:
             let c = CGPoint(x: rect.midX, y: rect.midY)
             let radius = min(w, h) * 0.045
@@ -68,6 +52,107 @@ enum OverlayGeometry {
         case .custom:
             let cols = max(2,min(10,settings.customColumns)), rows = max(2,min(10,settings.customRows))
             return (1..<cols).map { v(CGFloat($0)/CGFloat(cols)) } + (1..<rows).map { horizontal(CGFloat($0)/CGFloat(rows)) }
+        }
+    }
+
+
+    // Golden rectangle construction: a chain of decreasing squares with
+    // quarter-circle arcs, matching the classic photography golden spiral.
+    // The geometry contains no numerical labels, and is only an overlay.
+    static func goldenSpiralGuides(in bounds: CGRect, settings: GuideSettings = .init()) -> [GuideStroke] {
+        guard bounds.width > 0, bounds.height > 0 else { return [] }
+
+        // Fit the golden rectangle to the current preview in either orientation.
+        let portrait = bounds.height >= bounds.width
+        let goldenAspect: CGFloat = portrait ? CGFloat(1 / phi) : CGFloat(phi)
+        let base = framingRect(inside: bounds, targetAspect: goldenAspect)
+        var available = base
+        var spiral = Path()
+        var construction: [GuideStroke] = []
+        var firstPoint = true
+
+        // The top/right/bottom/left order produces a continuous inward spiral
+        // from the upper-left of the portrait golden rectangle.
+        for index in 0..<10 {
+            let direction = index % 4
+            let side = direction.isMultiple(of: 2) ? available.width : available.height
+            guard side > min(base.width, base.height) * 0.002 else { break }
+
+            let square: CGRect
+            switch direction {
+            case 0:
+                square = CGRect(x: available.minX, y: available.minY, width: side, height: side)
+                available = CGRect(x: available.minX, y: available.minY + side,
+                                   width: available.width, height: max(0, available.height - side))
+            case 1:
+                square = CGRect(x: available.maxX - side, y: available.minY, width: side, height: side)
+                available = CGRect(x: available.minX, y: available.minY,
+                                   width: max(0, available.width - side), height: available.height)
+            case 2:
+                square = CGRect(x: available.minX, y: available.maxY - side, width: side, height: side)
+                available = CGRect(x: available.minX, y: available.minY,
+                                   width: available.width, height: max(0, available.height - side))
+            default:
+                square = CGRect(x: available.minX, y: available.minY, width: side, height: side)
+                available = CGRect(x: available.minX + side, y: available.minY,
+                                   width: max(0, available.width - side), height: available.height)
+            }
+
+            let center: CGPoint
+            switch direction {
+            case 0: center = CGPoint(x: square.minX, y: square.maxY)
+            case 1: center = CGPoint(x: square.minX, y: square.minY)
+            case 2: center = CGPoint(x: square.maxX, y: square.minY)
+            default: center = CGPoint(x: square.maxX, y: square.maxY)
+            }
+
+            // A 90-degree circular arc inscribed in each successively
+            // smaller square. Subdivision keeps Canvas paths smooth.
+            for step in 0...40 {
+                let angle = (-CGFloat.pi / 2) + CGFloat(index) * (.pi / 2)
+                          + CGFloat(step) / 40 * (.pi / 2)
+                let point = CGPoint(x: center.x + side * cos(angle),
+                                    y: center.y + side * sin(angle))
+                if firstPoint {
+                    spiral.move(to: point)
+                    firstPoint = false
+                } else {
+                    spiral.addLine(to: point)
+                }
+            }
+
+            // Thin visible square construction edges, plus subtle diagonals.
+            construction.append(GuideStroke(path: Path(square)))
+            if index < 5 {
+                var diagonal = Path()
+                diagonal.move(to: CGPoint(x: square.minX, y: square.minY))
+                diagonal.addLine(to: CGPoint(x: square.maxX, y: square.maxY))
+                construction.append(GuideStroke(path: diagonal, dashed: true))
+            }
+        }
+
+        var border = Path()
+        border.addRect(base)
+        // Put the main spiral first so callers and tests can identify it.
+        let strokes = [GuideStroke(path: spiral, accent: true),
+                       GuideStroke(path: border)] + construction
+
+        // Rotation and mirroring remain available from the guide picker.
+        // Uniformly scale after rotation so no line runs outside preview.
+        let quarterTurns = ((settings.spiralTurns % 4) + 4) % 4
+        let rotation = CGFloat(quarterTurns) * .pi / 2
+        let rotatedWidth = quarterTurns.isMultiple(of: 2) ? base.width : base.height
+        let rotatedHeight = quarterTurns.isMultiple(of: 2) ? base.height : base.width
+        let scale = min(1, min(bounds.width / rotatedWidth, bounds.height / rotatedHeight))
+        let centerX = bounds.midX, centerY = bounds.midY
+        var transform = CGAffineTransform(translationX: -centerX, y: -centerY)
+        if settings.spiralMirrored { transform = transform.scaledBy(x: -1, y: 1) }
+        transform = transform.rotated(by: rotation)
+        transform = transform.scaledBy(x: scale, y: scale)
+        transform = transform.translatedBy(x: centerX, y: centerY)
+        return strokes.map { stroke in
+            GuideStroke(path: stroke.path.applying(transform),
+                        accent: stroke.accent, dashed: stroke.dashed)
         }
     }
 

@@ -33,6 +33,19 @@ struct OverlayCanvas: View {
                 context.stroke(fixed,with:.color(.white),lineWidth:2)
                 return
             }
+            if kind == .goldenSpiral {
+                for guide in OverlayGeometry.lines(for: kind, in: bounds, settings: settings) {
+                    let ink = guide.accent ? AsperitoPalette.gold : Color.white
+                    let alpha = guide.accent ? opacity : opacity * (guide.dashed ? 0.25 : 0.45)
+                    let lineWidth: CGFloat = guide.accent ? 2.8 : 0.85
+                    let style = StrokeStyle(lineWidth: lineWidth,
+                                            lineCap: .round,
+                                            lineJoin: .round,
+                                            dash: guide.dashed ? [3, 5] : [])
+                    context.stroke(guide.path, with: .color(ink.opacity(alpha)), style: style)
+                }
+                return
+            }
             for guide in OverlayGeometry.lines(for:kind,in:bounds,settings:settings) {
                 let stroke = StrokeStyle(lineWidth:guide.accent ? 1.8 : 1, dash:guide.dashed ? [7,5] : [])
                 context.stroke(guide.path, with:.color(color.opacity(opacity)), style:stroke)

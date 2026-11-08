@@ -45,6 +45,35 @@ final class OverlayGeometryTests: XCTestCase {
                         settings: GuideSettings(customRows: 100, customColumns: 100)).count, 18)
     }
 
+    func testGoldenSpiralHasMainArcAndConstructionGuides() {
+        let paths = OverlayGeometry.lines(for: .goldenSpiral, in: portrait)
+        XCTAssertGreaterThanOrEqual(paths.count, 12)
+        XCTAssertTrue(paths[0].accent, "First path should be the bright spiral")
+        XCTAssertTrue(paths.contains(where: { $0.dashed }), "Construction diagonals must be present")
+        XCTAssertFalse(paths[1].accent, "Bounding rectangle should not glow")
+        XCTAssertFalse(paths[0].path.boundingRect.isEmpty)
+    }
+
+    func testGoldenSpiralConstructionWorksInLandscapeAndRotations() {
+        for frame in [portrait, landscape] {
+            for turns in 0..<4 {
+                for mirror in [false, true] {
+                    let guides = OverlayGeometry.lines(
+                        for: .goldenSpiral, in: frame,
+                        settings: GuideSettings(spiralTurns: turns, spiralMirrored: mirror))
+                    XCTAssertFalse(guides.isEmpty)
+                    for guide in guides {
+                        let rect = guide.path.boundingRect
+                        XCTAssertGreaterThanOrEqual(rect.minX, frame.minX - 0.25)
+                        XCTAssertGreaterThanOrEqual(rect.minY, frame.minY - 0.25)
+                        XCTAssertLessThanOrEqual(rect.maxX, frame.maxX + 0.25)
+                        XCTAssertLessThanOrEqual(rect.maxY, frame.maxY + 0.25)
+                    }
+                }
+            }
+        }
+    }
+
     func testSpiralSupportsRotationAndMirroring() {
         let normal = OverlayGeometry.lines(for: .goldenSpiral, in: portrait).first!.path.boundingRect
         let rotated = OverlayGeometry.lines(for: .goldenSpiral, in: portrait,
