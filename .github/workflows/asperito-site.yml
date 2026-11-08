@@ -47,6 +47,7 @@ jobs:
             --name asperito-all-17-screens \
             --dir /tmp/asperito-capture
           cp -f /tmp/asperito-capture/*.png docs/screenshots/
+          cp -f FrameGuide/Assets.xcassets/DirectorLogo.imageset/director.jpg docs/director.jpg
           test "$(find docs/screenshots -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" = "17"
           file docs/screenshots/overlay-custom.png
           file docs/screenshots/onboarding.png
@@ -60,7 +61,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/
+          git add docs/screenshots/ docs/director.jpg
           if git diff --cached --quiet; then
             echo "Screenshot files already current."
           else
